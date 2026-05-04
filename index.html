@@ -698,30 +698,140 @@ button{
   .stats{grid-template-columns:1fr !important}
 }
 
+
+/* v25 cleanup and comfort pass */
+.wrap{max-width:1520px !important;padding:0 26px 34px !important;overflow-x:hidden;}
+.header{
+  width:100% !important;
+  margin:0 !important;
+  border-radius:0 0 34px 34px !important;
+  padding:22px 34px !important;
+  background:linear-gradient(135deg,#051b3a 0%,#0a2f62 60%,#0b3f82 100%) !important;
+  overflow:hidden;
+}
+.brand-simple{position:relative;padding-left:0 !important;}
+.brand-kicker{
+  display:inline-flex;
+  margin-bottom:6px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  color:#d8e9ff;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.brand-head{gap:0 !important;}
+.header h1{font-size:28px !important;margin:0 0 6px !important;}
+.header p{margin:0 !important;color:#dce9fb !important;font-size:14px !important;max-width:760px;}
+.app-logo{display:none !important;}
+.header .actions{gap:10px !important;align-self:flex-start;}
+.header .actions .btn2{min-height:44px;padding:10px 18px !important;border-radius:14px !important;}
+
+.stats{gap:16px !important;margin:18px 0 16px !important;}
+.stat-card{padding:20px 22px 18px 84px !important;min-height:106px !important;}
+.stat-card .stat-icon{
+  position:absolute;left:20px;top:22px;width:48px;height:48px;border-radius:16px;
+  display:grid;place-items:center;font-size:22px;
+  background:linear-gradient(135deg,#edf5ff,#dcecff);
+  border:1px solid #d8e6f6;
+}
+.stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,#f3ebff,#e4d7ff)}
+.stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,#e6fff0,#d1f7e0)}
+.stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,#fff3e6,#ffe2be)}
+.stats .card:before{display:none !important;content:none !important;}
+.stat-title{font-size:14px !important;}
+.stat-value{font-size:30px !important;}
+
+.main-tabs{align-items:flex-start;gap:10px !important;margin:16px 0 12px !important;}
+.main-tabs .tab,.more-btn{min-height:46px !important;padding:10px 16px !important;border-radius:14px !important;}
+.more-menu{position:relative;}
+.more-dropdown{
+  position:absolute;right:0;top:54px;z-index:20;min-width:210px;padding:8px;
+  border-radius:16px;background:#fff;border:1px solid #dce8f6;box-shadow:0 18px 40px rgba(11,42,84,.16);
+  display:grid;gap:8px;
+}
+.more-dropdown .menu-link{justify-content:flex-start !important;}
+
+.dashboard-grid{gap:18px !important;}
+.task-grid{grid-template-columns:repeat(3,1fr) !important;}
+.task-grid-3 .task-card{min-height:120px !important;}
+
+.layout{grid-template-columns:minmax(680px,1.08fr) minmax(420px,.92fr) !important;gap:18px !important;}
+.card{border-radius:24px !important;}
+
+.scan-box{padding:16px 18px !important;border-radius:18px !important;}
+.search input{min-height:52px !important;}
+
+.selected,
+tbody tr.selected{
+  background:linear-gradient(90deg,#e8f2ff 0%,#f6fbff 100%) !important;
+  box-shadow:inset 6px 0 0 #0a6bff, 0 0 0 1px rgba(10,107,255,.12) !important;
+  transform:translateY(-1px);
+}
+.selected td:first-child{border-top-left-radius:16px;border-bottom-left-radius:16px;}
+.selected td:last-child{border-top-right-radius:16px;border-bottom-right-radius:16px;}
+tbody tr:hover{background:#f7fbff !important;}
+
+.product-hero{min-height:138px !important;padding:20px !important;}
+.metric-grid{grid-template-columns:repeat(4,1fr) !important;gap:10px !important;}
+.quick-actions{
+  display:grid !important;
+  grid-template-columns:repeat(3,1fr) !important;
+  gap:10px !important;
+  align-items:stretch;
+}
+.quick-actions .btn,.quick-actions .btn2,.quick-actions .danger{width:100%;min-height:52px !important;border-radius:16px !important;}
+.quick-actions .primary-sell{min-height:58px !important;font-size:20px !important;}
+.quick-actions .danger{grid-column:1 / -1 !important;}
+
+/* Hide low/min-stock oriented UI */
+button[onclick*="editMinStock"],
+#dashLowStock,
+[onclick*="goProductFilter('low')"],
+button[data-filter="low"]{display:none !important;}
+
+@media(max-width:1180px){
+  .layout{grid-template-columns:1fr !important;}
+  .quick-actions{grid-template-columns:repeat(2,1fr) !important;}
+}
+@media(max-width:860px){
+  .stats{grid-template-columns:1fr 1fr !important;}
+  .task-grid{grid-template-columns:1fr !important;}
+  .metric-grid{grid-template-columns:1fr 1fr !important;}
+  .quick-actions{grid-template-columns:1fr !important;}
+}
+@media(max-width:640px){
+  .wrap{padding:0 14px 24px !important;}
+  .header{padding:18px 16px !important;border-radius:0 0 24px 24px !important;display:block !important;}
+  .header .actions{margin-top:14px;}
+  .stats{grid-template-columns:1fr !important;}
+}
+
 </style>
 </head>
 <body>
 <div id="toastWrap" class="toastWrap"></div>
 <div class="wrap">
   <div class="header no-print">
-    <div class="brand-head">
-      <div class="app-logo">▧</div>
+    <div class="brand-head brand-simple">
       <div>
+        <div class="brand-kicker">Склад и магазин</div>
         <h1>ТехноМир Магазин</h1>
-        <p>Удобный склад: товары, поступления, продажи, остатки и QR-этикетки 58×40</p>
+        <p>Товары, поступления, продажи, остатки и QR-этикетки 58×40</p>
       </div>
     </div>
     <div class="actions"><button class="btn2" onclick="backup()">⬇️ Резерв</button><button class="btn2" onclick="restore()">♻️ Восстановить</button></div>
   </div>
 
   <div class="stats no-print">
-    <div class="card"><div class="stat-title">📦 В наличии</div><div id="stStock" class="stat-value">0</div></div>
-    <div class="card"><div class="stat-title">🏷️ Моделей</div><div id="stModels" class="stat-value">0</div></div>
-    <div class="card"><div class="stat-title">💰 Закупка остатков</div><div id="stBuy" class="stat-value">0 ₽</div></div>
-    <div class="card"><div class="stat-title">🧾 Продаж сегодня</div><div id="stToday" class="stat-value">0</div></div>
+    <div class="card stat-card"><div class="stat-icon">📦</div><div class="stat-title">В наличии</div><div id="stStock" class="stat-value">0</div></div>
+    <div class="card stat-card"><div class="stat-icon">🏷️</div><div class="stat-title">Моделей</div><div id="stModels" class="stat-value">0</div></div>
+    <div class="card stat-card"><div class="stat-icon">💰</div><div class="stat-title">Закупка остатков</div><div id="stBuy" class="stat-value">0 ₽</div></div>
+    <div class="card stat-card"><div class="stat-icon">🧾</div><div class="stat-title">Продаж сегодня</div><div id="stToday" class="stat-value">0</div></div>
   </div>
 
-  <div class="tabs no-print">
+  <div class="tabs no-print main-tabs">
     <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
     <button id="tab-products" class="btn2 tab" onclick="view('products')">📋 Товары</button>
     <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">🧮 Инвентаризация</button>
@@ -730,9 +840,13 @@ button{
     <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
     <button id="tab-labels" class="btn2 tab" onclick="view('labels')">🏷️ Этикетки</button>
     <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙️ Настройки</button>
-    <button id="tab-reports" class="btn2 tab" onclick="view('reports')">📊 Отчёты</button>
-    <button id="tab-activity" class="btn2 tab" onclick="view('activity')">🕘 Действия</button>
-    <button id="tab-importexport" class="btn2 tab" onclick="view('importexport')">💾 Резерв</button>
+    <div class="more-menu">
+      <button class="btn2 more-btn" type="button" onclick="toggleMoreMenu(event)">⋯ Ещё</button>
+      <div id="moreMenu" class="more-dropdown hidden">
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('reports')">📊 Отчёты</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Журнал действий</button>
+      </div>
+    </div>
   </div>
 
 
@@ -741,16 +855,11 @@ button{
       <div class="card">
         <h2>Быстрые задачи</h2>
         <p class="muted">Главные места, куда стоит смотреть каждый день.</p>
-        <div class="task-grid">
+        <div class="task-grid task-grid-3">
           <button class="task-card" onclick="goProductFilter('noPrice')">
             <span>🏷️</span>
             <b id="dashNoPrice">0</b>
             <small>Товаров без цены</small>
-          </button>
-          <button class="task-card" onclick="goProductFilter('low')">
-            <span>📉</span>
-            <b id="dashLowStock">0</b>
-            <small>Мало остатка</small>
           </button>
           <button class="task-card" onclick="goProductFilter('zero')">
             <span>⭕</span>
@@ -809,7 +918,7 @@ button{
           <button class="btn2 product-filter" data-filter="stock" onclick="setProductFilter('stock')">В наличии</button>
           <button class="btn2 product-filter" data-filter="noPrice" onclick="setProductFilter('noPrice')">Без цены</button>
           <button class="btn2 product-filter" data-filter="zero" onclick="setProductFilter('zero')">Нулевой остаток</button>
-          <button class="btn2 product-filter" data-filter="low" onclick="setProductFilter('low')">Мало остатка</button>
+          
           <button class="btn2 product-filter" data-filter="archive" onclick="setProductFilter('archive')">Архив</button>
         </div>
         <div class="category-filter-row">
@@ -1071,7 +1180,33 @@ function prepareReceiptForProduct(id){
 }
 
 function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
-function view(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById("view-"+v).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+v).classList.add("active");render()}
+function view(v){
+  document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));
+  document.getElementById("view-"+v).classList.remove("hidden");
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  const tab=document.getElementById("tab-"+v);
+  if(tab) tab.classList.add("active");
+  const more=E("moreMenu");
+  if(more) more.classList.add("hidden");
+  render()
+}
+function toggleMoreMenu(e){
+  e.stopPropagation();
+  const menu=E("moreMenu");
+  if(menu) menu.classList.toggle("hidden");
+}
+function viewFromMenu(v){
+  const menu=E("moreMenu");
+  if(menu) menu.classList.add("hidden");
+  view(v);
+}
+document.addEventListener("click",(e)=>{
+  const menu=E("moreMenu");
+  if(!menu) return;
+  const holder=document.querySelector(".more-menu");
+  if(holder && !holder.contains(e.target)) menu.classList.add("hidden");
+});
+
 function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports();renderActivityLog()}
 
 
@@ -1300,7 +1435,6 @@ function renderDashboard(){
 
   const active=state.products.filter(p=>!p.archived);
   const noPrice=active.filter(p=>stock(p)>0 && !Number(p.sellPrice||0));
-  const low=active.filter(p=>stock(p)>0 && Number(p.minStock||0)>0 && stock(p)<=Number(p.minStock||0));
   const zero=active.filter(p=>stock(p)<=0);
   const todaySales=state.sales.filter(s=>s.date===today());
   const revenue=todaySales.reduce((sum,s)=>sum+Number(s.price||0)*Number(s.qty||0),0);
@@ -1308,7 +1442,6 @@ function renderDashboard(){
   const stockUnits=active.reduce((sum,p)=>sum+Math.max(0,stock(p)),0);
 
   E("dashNoPrice").textContent=noPrice.length;
-  E("dashLowStock").textContent=low.length;
   E("dashZeroStock").textContent=zero.length;
   E("dashReceipts").textContent=state.receipts.length;
   E("dashSalesToday").textContent=todaySales.reduce((a,s)=>a+Number(s.qty||0),0);
@@ -1459,14 +1592,13 @@ function renderDetails(){
       <div class="metric"><span>Продажная цена</span><b>${pricePill}</b></div>
       <div class="metric"><span>Последняя закупка</span><b>${rub(lastBuy(p))}</b></div>
       <div class="metric"><span>Средняя закупка</span><b>${rub(avgBuy(p))}</b></div>
-      <div class="metric"><span>Мин. остаток</span><b>${Number(p.minStock||0)||"—"}</b></div>
     </div>
 
     <div class="quick-actions">
       <button class="btn2" onclick="editProduct('${p.id}')">✏️ Редактировать</button>
       <button class="btn2" onclick="prepareReceiptForProduct('${p.id}')">➕ Приход</button>
       <button class="btn primary-sell" onclick="prepareSale('${p.id}')">🛒 Продать</button>
-      <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button><button class="btn2" onclick="editMinStock('${p.id}')">📉 Мин. остаток</button>
+      <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button>
       <button class="btn2" onclick="prepareLabel('${p.id}')">🏷️ Этикетка</button>
       <button class="btn2" onclick="toggleArchiveProduct('${p.id}')">${p.archived?'↩️ Вернуть':'📦 В архив'}</button>
       <button class="danger" onclick="deleteProduct('${p.id}')">🗑️ Удалить ошибочный</button>
@@ -1504,8 +1636,6 @@ function editProduct(id){
   if(name===null) return;
   const sell=prompt("Продажная цена:", p.sellPrice||"") ?? null;
   if(sell===null) return;
-  const minStock=prompt("Минимальный остаток для уведомления:", p.minStock||"") ?? null;
-  if(minStock===null) return;
 
   const previous=cloneData(p);
   const oldCode=p.code;
@@ -1514,7 +1644,6 @@ function editProduct(id){
   p.model=model.trim();
   p.name=name.trim();
   p.sellPrice=Number(sell||0);
-  p.minStock=Number(minStock||0);
 
   const newCode=code(p.brand,p.model);
   // Если новый код не занят другим товаром, обновляем QR-код.
