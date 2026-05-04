@@ -808,38 +808,394 @@ button[data-filter="low"]{display:none !important;}
   .stats{grid-template-columns:1fr !important;}
 }
 
+
+/* v26 final visual direction — clean ТехноМир mockup style */
+:root{
+  --tm-deep:#061a38;
+  --tm-navy:#092b5c;
+  --tm-blue:#006dff;
+  --tm-blue2:#0a84ff;
+  --tm-bg:#eef6ff;
+  --tm-card:#ffffff;
+  --tm-line:#dbe8f7;
+  --tm-text:#071d3d;
+  --tm-muted:#6b7c94;
+}
+html,body{min-height:100%}
+body{
+  background:
+    radial-gradient(circle at 50% -10%, rgba(0,109,255,.16), transparent 35%),
+    linear-gradient(180deg,#e9f4ff 0%,#f8fbff 45%,#eaf3fb 100%) !important;
+  color:var(--tm-text) !important;
+}
+.wrap{
+  max-width:none !important;
+  padding:0 26px 34px !important;
+  overflow-x:hidden !important;
+}
+
+/* hero header */
+.header{
+  position:relative;
+  width:calc(100% + 52px) !important;
+  margin:0 -26px !important;
+  min-height:172px !important;
+  padding:28px 42px 76px !important;
+  border-radius:0 !important;
+  overflow:hidden !important;
+  background:
+    linear-gradient(126deg,rgba(4,18,42,.96) 0%,rgba(7,36,83,.98) 48%,rgba(0,92,205,.90) 100%) !important;
+  box-shadow:none !important;
+}
+.header:before{
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(115deg,transparent 0 48%,rgba(255,255,255,.08) 48.2% 49%,transparent 49.2%),
+    linear-gradient(140deg,transparent 0 62%,rgba(0,148,255,.18) 62.2% 78%,transparent 78.2%);
+  pointer-events:none;
+}
+.header:after{
+  content:"";
+  position:absolute;right:-60px;top:-80px;width:520px;height:260px;
+  background:radial-gradient(circle,rgba(0,122,255,.34),transparent 62%);
+  filter:blur(2px);
+  pointer-events:none;
+}
+.brand-premium{position:relative;z-index:1;display:flex;align-items:center;gap:20px}
+.tm-mark{
+  width:72px;height:58px;display:flex;align-items:center;justify-content:center;gap:0;
+  font-weight:1000;font-style:italic;font-size:38px;line-height:1;
+  letter-spacing:-.16em;color:#fff;text-shadow:0 10px 28px rgba(0,0,0,.24);
+}
+.tm-mark span:last-child{color:#167dff;margin-left:2px}
+.header h1{
+  margin:0 0 9px !important;
+  font-size:42px !important;
+  line-height:1 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.045em;
+}
+.header h1 em{
+  font-style:normal;
+  color:#1680ff;
+}
+.header p{
+  margin:0 !important;
+  color:#d9e9ff !important;
+  font-size:17px !important;
+}
+.header .actions{
+  position:relative;z-index:2;
+  gap:12px !important;
+  align-self:flex-start;
+}
+.header .actions .btn2{
+  color:#fff !important;
+  min-height:52px !important;
+  padding:0 22px !important;
+  border-radius:12px !important;
+  background:rgba(7,24,54,.38) !important;
+  border:1px solid rgba(197,222,255,.28) !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.15) !important;
+}
+
+/* white control panel overlapping hero */
+.control-panel{
+  position:relative;
+  z-index:4;
+  margin:-58px 0 18px !important;
+  padding:18px 18px 14px !important;
+  border-radius:22px !important;
+  background:rgba(255,255,255,.96) !important;
+  border:1px solid rgba(219,232,247,.95) !important;
+  box-shadow:0 22px 50px rgba(20,58,102,.16) !important;
+}
+.control-panel .stats{
+  margin:0 !important;
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(180px,1fr)) !important;
+  gap:14px !important;
+}
+.stat-card{
+  position:relative;
+  min-height:104px !important;
+  padding:20px 22px 18px 92px !important;
+  border-radius:16px !important;
+  background:linear-gradient(180deg,#fff,#fbfdff) !important;
+  border:1px solid #e1ebf7 !important;
+  box-shadow:0 10px 26px rgba(17,54,96,.06) !important;
+}
+.stat-card .stat-icon{
+  left:22px !important;top:24px !important;
+  width:54px !important;height:54px !important;
+  border-radius:999px !important;
+  font-size:25px !important;
+  background:linear-gradient(135deg,#e7f1ff,#d8e9ff) !important;
+  border:0 !important;
+}
+.stat-card:nth-child(2) .stat-icon{background:linear-gradient(135deg,#f1e8ff,#e3d6ff) !important}
+.stat-card:nth-child(3) .stat-icon{background:linear-gradient(135deg,#dcfce7,#c7f3d7) !important}
+.stat-card:nth-child(4) .stat-icon{background:linear-gradient(135deg,#ffedd5,#ffd8a7) !important}
+.stat-title{
+  color:#677891 !important;
+  font-size:15px !important;
+  margin-bottom:4px !important;
+}
+.stat-value{
+  font-size:32px !important;
+  line-height:1.05;
+  color:#071d3d !important;
+}
+
+/* nav under stats */
+.main-tabs{
+  margin:16px 0 0 !important;
+  padding-top:12px;
+  border-top:1px solid #eef3f9;
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  overflow-x:auto;
+  gap:0 !important;
+}
+.main-tabs .tab,.more-btn{
+  position:relative;
+  min-height:52px !important;
+  padding:0 24px !important;
+  border-radius:0 !important;
+  border:0 !important;
+  border-right:1px solid #e7eef7 !important;
+  color:#53657e !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  white-space:nowrap;
+}
+.main-tabs .tab.active{
+  color:#006dff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+.main-tabs .tab.active:after{
+  content:"";
+  position:absolute;left:20px;right:20px;bottom:0;height:4px;border-radius:999px;
+  background:linear-gradient(90deg,#006dff,#0a84ff);
+}
+.more-menu{position:relative;margin-left:auto}
+.more-dropdown{
+  top:58px !important;
+  right:0 !important;
+  border-radius:16px !important;
+}
+
+/* overall layout */
+.view{max-width:1780px;margin:0 auto}
+.layout{
+  grid-template-columns:minmax(760px,1.12fr) minmax(560px,.88fr) !important;
+  gap:18px !important;
+}
+.card{
+  border-radius:20px !important;
+  background:rgba(255,255,255,.96) !important;
+  border:1px solid #dbe8f7 !important;
+  box-shadow:0 16px 42px rgba(19,54,96,.08) !important;
+  padding:20px !important;
+}
+
+/* scanner/search panel */
+.scan-box{
+  min-height:84px;
+  background:linear-gradient(135deg,#fbfdff,#f2f8ff) !important;
+  border-radius:18px !important;
+  padding:18px 20px !important;
+}
+.scanner-status{
+  min-width:130px;text-align:center;
+  background:#eef6ff !important;
+  border-color:#d9e9fb !important;
+  color:#0b3973 !important;
+}
+.search{
+  grid-template-columns:1fr 84px !important;
+  gap:10px !important;
+}
+.search input{height:54px !important;border-radius:14px !important}
+.search .btn2, .search button{height:54px !important;border-radius:14px !important}
+
+/* filters */
+.mini-tabs{
+  gap:9px !important;
+  margin-bottom:12px !important;
+}
+.mini-tabs .btn2{
+  min-height:43px !important;
+  padding:0 18px !important;
+  border-radius:12px !important;
+}
+.category-filter-row{
+  display:grid !important;
+  grid-template-columns:1fr 1fr auto !important;
+  gap:10px !important;
+}
+.category-filter-row select,.category-filter-row button{
+  height:50px !important;
+  border-radius:13px !important;
+}
+
+/* table/list */
+table{font-size:14px !important}
+th{
+  background:#f7faff !important;
+  height:48px !important;
+  font-size:12px !important;
+  color:#5f718a !important;
+  letter-spacing:.02em !important;
+}
+td{
+  padding:14px 12px !important;
+  border-bottom:1px solid #e7eff8 !important;
+}
+tbody tr{
+  transition:background .13s ease, box-shadow .13s ease, transform .13s ease !important;
+}
+tbody tr:hover{background:#f6faff !important}
+tbody tr.selected{
+  background:linear-gradient(90deg,#e7f1ff 0%,#f7fbff 100%) !important;
+  box-shadow:inset 0 0 0 2px rgba(0,109,255,.78), inset 7px 0 0 #006dff !important;
+  transform:translateY(-1px);
+}
+tbody tr.selected td:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+tbody tr.selected td:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+.table-footer{
+  display:flex;justify-content:space-between;gap:14px;
+  padding:14px 4px 0;
+  color:#6b7c94;
+  font-size:13px;
+}
+
+/* product detail panel */
+.product-hero{
+  display:grid !important;
+  grid-template-columns:1fr auto !important;
+  min-height:176px !important;
+  padding:24px !important;
+  border-radius:18px !important;
+  background:linear-gradient(135deg,#fff,#f8fbff) !important;
+}
+.product-hero h2{
+  font-size:27px !important;
+  letter-spacing:-.04em;
+}
+.qr-card{
+  width:136px !important;
+  padding:10px !important;
+  border-radius:16px !important;
+}
+.metric-grid{
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+  margin:14px 0 !important;
+}
+.metric{
+  min-height:86px;
+  padding:16px !important;
+  border-radius:16px !important;
+  background:linear-gradient(180deg,#fbfdff,#f7fbff) !important;
+}
+.metric b{font-size:20px !important}
+.quick-actions{
+  display:grid !important;
+  grid-template-columns:1.3fr 1fr 1fr !important;
+  gap:11px !important;
+}
+.quick-actions .primary-sell{
+  grid-column:1 / -1;
+  order:-2;
+  min-height:62px !important;
+  font-size:20px !important;
+  background:linear-gradient(135deg,#006dff,#005bd9) !important;
+  box-shadow:0 16px 30px rgba(0,109,255,.24) !important;
+}
+.quick-actions .btn2{
+  min-height:52px !important;
+  border-radius:14px !important;
+  background:linear-gradient(180deg,#fff,#f7fbff) !important;
+}
+.quick-actions .danger{
+  grid-column:1 / -1 !important;
+  min-height:48px !important;
+  border-radius:14px !important;
+  color:#d1273d !important;
+  background:#fff3f4 !important;
+  border:1px solid #ffd1d7 !important;
+}
+
+/* dashboard cards */
+.dashboard-grid{grid-template-columns:1.05fr .95fr !important;gap:18px !important}
+.task-grid-3{grid-template-columns:repeat(3,1fr) !important}
+.task-card{
+  min-height:118px !important;
+  border-radius:16px !important;
+  background:linear-gradient(135deg,#fbfdff,#f2f8ff) !important;
+}
+
+/* remove min stock visual noise */
+button[onclick*="editMinStock"],
+button[data-filter="low"],
+[onclick*="goProductFilter('low')"]{display:none !important}
+
+/* keep from overflowing */
+button{white-space:nowrap}
+@media(max-width:1240px){
+  .layout,.dashboard-grid{grid-template-columns:1fr !important}
+  .control-panel .stats{grid-template-columns:1fr 1fr !important}
+}
+@media(max-width:760px){
+  .wrap{padding:0 14px 24px !important}
+  .header{width:calc(100% + 28px) !important;margin:0 -14px !important;padding:22px 18px 76px !important;display:block !important}
+  .header .actions{margin-top:16px}
+  .header h1{font-size:32px !important}
+  .tm-mark{width:56px;height:48px;font-size:30px}
+  .control-panel{margin-top:-52px !important;padding:12px !important}
+  .control-panel .stats{grid-template-columns:1fr !important}
+  .category-filter-row{grid-template-columns:1fr !important}
+  .metric-grid{grid-template-columns:1fr 1fr !important}
+  .quick-actions{grid-template-columns:1fr !important}
+  .task-grid-3{grid-template-columns:1fr !important}
+}
+
 </style>
 </head>
 <body>
 <div id="toastWrap" class="toastWrap"></div>
 <div class="wrap">
   <div class="header no-print">
-    <div class="brand-head brand-simple">
+    <div class="brand-head brand-premium">
+      <div class="tm-mark"><span>Т</span><span>М</span></div>
       <div>
-        <div class="brand-kicker">Склад и магазин</div>
-        <h1>ТехноМир Магазин</h1>
-        <p>Товары, поступления, продажи, остатки и QR-этикетки 58×40</p>
+        <h1><span>ТехноМир</span> <em>Магазин</em></h1>
+        <p>Склад, продажи, поступления, остатки и QR-этикетки 58×40</p>
       </div>
     </div>
     <div class="actions"><button class="btn2" onclick="backup()">⬇️ Резерв</button><button class="btn2" onclick="restore()">♻️ Восстановить</button></div>
   </div>
 
-  <div class="stats no-print">
+  <div class="control-panel no-print">
+  <div class="stats">
     <div class="card stat-card"><div class="stat-icon">📦</div><div class="stat-title">В наличии</div><div id="stStock" class="stat-value">0</div></div>
     <div class="card stat-card"><div class="stat-icon">🏷️</div><div class="stat-title">Моделей</div><div id="stModels" class="stat-value">0</div></div>
     <div class="card stat-card"><div class="stat-icon">💰</div><div class="stat-title">Закупка остатков</div><div id="stBuy" class="stat-value">0 ₽</div></div>
     <div class="card stat-card"><div class="stat-icon">🧾</div><div class="stat-title">Продаж сегодня</div><div id="stToday" class="stat-value">0</div></div>
   </div>
 
-  <div class="tabs no-print main-tabs">
+  <div class="tabs main-tabs">
     <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
-    <button id="tab-products" class="btn2 tab" onclick="view('products')">📋 Товары</button>
-    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">🧮 Инвентаризация</button>
-    <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">➕ Поступление</button>
-    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">📥 Журнал поступлений</button>
+    <button id="tab-products" class="btn2 tab" onclick="view('products')">▣ Товары</button>
+    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">▤ Инвентаризация</button>
+    <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">↓ Поступление</button>
+    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">▥ Журнал поступлений</button>
     <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
-    <button id="tab-labels" class="btn2 tab" onclick="view('labels')">🏷️ Этикетки</button>
-    <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙️ Настройки</button>
+    <button id="tab-labels" class="btn2 tab" onclick="view('labels')">◇ Этикетки</button>
+    <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙ Настройки</button>
     <div class="more-menu">
       <button class="btn2 more-btn" type="button" onclick="toggleMoreMenu(event)">⋯ Ещё</button>
       <div id="moreMenu" class="more-dropdown hidden">
@@ -847,6 +1203,7 @@ button[data-filter="low"]{display:none !important;}
         <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Журнал действий</button>
       </div>
     </div>
+  </div>
   </div>
 
 
@@ -910,9 +1267,9 @@ button[data-filter="low"]{display:none !important;}
             <b>Быстрый поиск / сканер</b>
             <div class="muted">Сканируй QR или введи модель. Если сканер отправляет Enter, товар откроется автоматически.</div>
           </div>
-          <div class="scanner-status" id="scannerStatus">Сканер готов</div>
+          <div class="scanner-status" id="scannerStatus">Готов к сканеру</div>
         </div>
-        <div class="search"><input id="search" placeholder="Поиск по модели, названию, бренду или QR" oninput="renderProducts()" onkeydown="handleSearchEnter(event)"><button class="btn2" onclick="search.value='';renderProducts()">Сброс</button></div>
+        <div class="search"><input id="search" placeholder="Поиск по штрихкоду, названию, модели или QR" oninput="renderProducts()" onkeydown="handleSearchEnter(event)"><button class="btn2" onclick="search.value='';renderProducts()">Сброс</button></div>
         <div class="mini-tabs" style="margin-bottom:12px">
           <button class="btn2 product-filter active" data-filter="all" onclick="setProductFilter('all')">Все</button>
           <button class="btn2 product-filter" data-filter="stock" onclick="setProductFilter('stock')">В наличии</button>
@@ -934,7 +1291,11 @@ button[data-filter="low"]{display:none !important;}
           </select>
           <button class="btn2" onclick="setCategoryFilter('')">Сбросить категорию</button>
         </div>
-        <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th>Продажа</th><th>Статус</th></tr></thead><tbody id="productsTable"></tbody></table></div>
+        <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th>Продажа</th><th>Статус</th></tr></thead><tbody id="productsTable"></tbody></table>
+        <div class="table-footer">
+          <span id="productsCountText">Товары загружены</span>
+          <span class="muted">Выбранный товар открыт справа</span>
+        </div></div>
       </div>
       <div class="card" id="details"><h2>Карточка товара</h2><p class="muted">Выбери товар или добавь поступление.</p></div>
     </div>
@@ -1326,7 +1687,7 @@ function setScannerStatus(text,type="ready"){
   if(type==="error") box.classList.add("scan-error");
   setTimeout(()=>{
     if(el){
-      el.textContent="Сканер готов";
+      el.textContent="Готов к сканеру";
       el.className="scanner-status";
     }
     if(box) box.classList.remove("scan-ok","scan-error");
@@ -1538,6 +1899,7 @@ function renderProducts(){
     return `${a.brand||""} ${a.model||""}`.localeCompare(`${b.brand||""} ${b.model||""}`,"ru");
   });
 
+  if(E("productsCountText")) E("productsCountText").textContent=`Показано: ${arr.length}`;
   productsTable.innerHTML=arr.map(p=>{
     const st=stock(p);
     return `<tr class="${p.id===selectedProductId?'selected':''} ${p.id===lastScannedProductId?'scan-flash':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
