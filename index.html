@@ -1568,6 +1568,119 @@ body{
   }
 }
 
+
+/* v29 — remove weird Ещё menu, add premium two-row navigation */
+.control-panel{
+  margin-top:-52px !important;
+  padding:16px 16px 18px !important;
+}
+.nav-shell{
+  margin-top:14px;
+  display:grid;
+  gap:10px;
+}
+.primary-tabs{
+  display:grid !important;
+  grid-template-columns:repeat(6,minmax(150px,1fr)) !important;
+  gap:10px !important;
+  margin:0 !important;
+  padding-top:8px !important;
+  border-top:1px solid #edf3fa !important;
+}
+.secondary-tabs{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:10px !important;
+  margin:0 !important;
+}
+.main-tabs .tab,
+.sub-tabs .tab{
+  width:100%;
+  min-height:50px !important;
+  padding:0 16px !important;
+  border-radius:16px !important;
+  background:linear-gradient(180deg,#ffffff,#f5f9ff) !important;
+  border:1px solid #dce7f5 !important;
+  color:#193252 !important;
+  box-shadow:0 10px 22px rgba(21,48,82,.05) !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-size:15px !important;
+  font-weight:800 !important;
+}
+.sub-tabs .tab{
+  width:auto;
+  min-width:170px;
+  flex:0 0 auto;
+}
+.nav-ico{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  background:linear-gradient(135deg,#eef5ff,#dde9ff);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+}
+.main-tabs .tab.active,
+.sub-tabs .tab.active{
+  background:linear-gradient(135deg,#0a6bff,#0058d8) !important;
+  border-color:#0a6bff !important;
+  color:#fff !important;
+  box-shadow:0 16px 30px rgba(10,107,255,.24) !important;
+}
+.main-tabs .tab.active .nav-ico,
+.sub-tabs .tab.active .nav-ico{
+  background:rgba(255,255,255,.18);
+  color:#fff;
+}
+.main-tabs .tab.active:after,
+.sub-tabs .tab.active:after{display:none !important;}
+.more-menu,.more-dropdown,.more-btn{display:none !important;}
+
+.header{
+  padding:28px 36px 70px !important;
+}
+.brand-head h1{font-size:44px !important; letter-spacing:-.02em;}
+.brand-head h1 em{font-style:normal;color:#1e86ff;}
+.brand-head p{font-size:15px !important;color:#d6e3f5 !important;}
+.tm-mark{
+  width:56px !important;height:56px !important;border-radius:16px !important;
+  background:linear-gradient(135deg,#0b62ff,#0f8cff) !important;
+  box-shadow:0 12px 30px rgba(18,110,255,.35) !important;
+}
+
+#productsTable tr.selected, tbody tr.selected{
+  background:linear-gradient(90deg,#e4f0ff 0%, #f8fbff 100%) !important;
+  box-shadow:inset 7px 0 0 #0a6bff, inset -2px 0 0 rgba(10,107,255,.18), 0 0 0 1px rgba(10,107,255,.2), 0 14px 28px rgba(10,107,255,.10) !important;
+  outline:2px solid rgba(10,107,255,.24);
+  outline-offset:-2px;
+}
+#productsTable tr.selected td:first-child:before{
+  content:"";
+  position:absolute;
+  left:8px; top:50%; transform:translateY(-50%);
+  width:10px; height:44px; border-radius:999px;
+  background:linear-gradient(180deg,#0b75ff,#005ad7);
+  box-shadow:0 0 0 6px rgba(10,107,255,.10);
+}
+
+@media (max-width:1280px){
+  .primary-tabs{grid-template-columns:repeat(3,minmax(150px,1fr)) !important;}
+}
+@media (max-width:820px){
+  .primary-tabs{grid-template-columns:repeat(2,minmax(140px,1fr)) !important;}
+  .sub-tabs .tab{min-width:calc(50% - 5px); flex:1 1 calc(50% - 5px);}  
+}
+@media (max-width:560px){
+  .primary-tabs{grid-template-columns:1fr !important;}
+  .sub-tabs .tab{min-width:100%; flex:1 1 100%;}
+}
+
 </style>
 </head>
 <body>
@@ -1591,22 +1704,21 @@ body{
     <div class="card stat-card"><div class="stat-icon">🧾</div><div class="stat-title">Продаж сегодня</div><div id="stToday" class="stat-value">0</div></div>
   </div>
 
-  <div class="tabs main-tabs">
-    <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
-    <button id="tab-products" class="btn2 tab" onclick="view('products')">▣ Товары</button>
-    <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">↓ Поступление</button>
-    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">▥ Журнал</button>
-    <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
-    <button id="tab-labels" class="btn2 tab" onclick="view('labels')">◇ Этикетки</button>
-    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">▤ Инвентаризация</button>
-    <div class="more-menu">
-      <button class="btn2 more-btn" type="button" onclick="toggleMoreMenu(event)">⋯ Ещё</button>
-      <div id="moreMenu" class="more-dropdown hidden">
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('reports')">📊 Отчёты</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Действия</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('importexport')">💾 Резерв</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('settings')">⚙ Настройки</button>
-      </div>
+  <div class="nav-shell">
+    <div class="tabs main-tabs primary-tabs">
+      <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')"><span class="nav-ico">🏠</span><span>Главная</span></button>
+      <button id="tab-products" class="btn2 tab" onclick="view('products')"><span class="nav-ico">📦</span><span>Товары</span></button>
+      <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')"><span class="nav-ico">⬇️</span><span>Поступление</span></button>
+      <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')"><span class="nav-ico">🧾</span><span>Журнал</span></button>
+      <button id="tab-sales" class="btn2 tab" onclick="view('sales')"><span class="nav-ico">🛒</span><span>Продажи</span></button>
+      <button id="tab-labels" class="btn2 tab" onclick="view('labels')"><span class="nav-ico">🏷️</span><span>Этикетки</span></button>
+    </div>
+    <div class="tabs sub-tabs secondary-tabs">
+      <button id="tab-inventory" class="btn2 tab sub-tab" onclick="view('inventory')"><span class="nav-ico">📋</span><span>Инвентаризация</span></button>
+      <button id="tab-reports" class="btn2 tab sub-tab" onclick="view('reports')"><span class="nav-ico">📊</span><span>Отчёты</span></button>
+      <button id="tab-activity" class="btn2 tab sub-tab" onclick="view('activity')"><span class="nav-ico">🕘</span><span>Действия</span></button>
+      <button id="tab-importexport" class="btn2 tab sub-tab" onclick="view('importexport')"><span class="nav-ico">💾</span><span>Резерв</span></button>
+      <button id="tab-settings" class="btn2 tab sub-tab" onclick="view('settings')"><span class="nav-ico">⚙️</span><span>Настройки</span></button>
     </div>
   </div>
   </div>
@@ -1958,21 +2070,8 @@ function view(v){
   if(more) more.classList.add("hidden");
   render();
 }
-function toggleMoreMenu(e){
-  if(e) e.stopPropagation();
-  const menu=E("moreMenu");
-  if(menu) menu.classList.toggle("hidden");
-}
-function viewFromMenu(v){
-  const menu=E("moreMenu");
-  if(menu) menu.classList.add("hidden");
-  view(v);
-}
-document.addEventListener("click",(e)=>{
-  const menu=E("moreMenu");
-  const holder=document.querySelector(".more-menu");
-  if(menu && holder && !holder.contains(e.target)) menu.classList.add("hidden");
-});
+function toggleMoreMenu(e){}
+function viewFromMenu(v){view(v);}
 
 function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports();renderActivityLog()}
 
