@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ТехноМир Store v1</title>
+<style>
+:root{--bg:#edf3f8;--card:#fff;--text:#172033;--muted:#64748b;--blue:#24466f;--blue2:#3b6fa8;--line:#e2e8f0;--green:#168a4b;--red:#c63642}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#dce8f4,#f4f8fb);color:var(--text)}
+.wrap{max-width:1360px;margin:auto;padding:18px}.header{background:linear-gradient(135deg,#142a45,#29517f);color:#fff;border-radius:26px;padding:24px;display:flex;justify-content:space-between;gap:16px;align-items:center;box-shadow:0 18px 42px rgba(15,35,61,.22)}
+h1,h2,h3{margin:0 0 12px}.header h1{font-size:28px}.header p{margin:6px 0 0;color:#cbd9ea}.actions,.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 8px 24px rgba(15,35,61,.07)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.layout{display:grid;grid-template-columns:1.12fr .88fr;gap:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stat-title{color:var(--muted);font-size:14px}.stat-value{font-size:27px;font-weight:900;margin-top:8px}.muted{color:var(--muted);font-size:13px}
+button,input,select,textarea{font:inherit}button{border:0;border-radius:14px;padding:11px 14px;font-weight:800;cursor:pointer;display:inline-flex;gap:8px;align-items:center;justify-content:center;transition:.15s}
+button:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,35,61,.12)}.btn{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}.btn2{background:#eef4fb;color:#203d62;border:1px solid #dae6f3}.danger{background:var(--red);color:#fff}.green{background:var(--green);color:#fff}.tab.active{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+input,select,textarea{width:100%;padding:12px;border:1px solid #dbe5ef;border-radius:14px;background:#f8fbfe;outline:none}input:focus,select:focus,textarea:focus{background:#fff;border-color:#5e8eca;box-shadow:0 0 0 4px rgba(94,142,202,.15)}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;color:#64748b;background:#f8fbfe;font-size:12px;text-transform:uppercase}th,td{padding:10px;border-bottom:1px solid #eaf0f7;vertical-align:top}tbody tr{cursor:pointer}tbody tr:hover{background:#f3f7fc}.selected{background:#dbeafe!important;box-shadow:inset 4px 0 0 #2c68ad}
+.pill{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:900}.ok{background:#dcfce7;color:#166534}.warn{background:#fff3cd;color:#8a5b00}.bad{background:#fee2e2;color:#991b1b}.box{background:#f8fbfe;border:1px solid #e7eef7;border-radius:18px;padding:14px}.hidden{display:none!important}.tabs{margin:16px 0}.search{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px}
+.label{width:290px;height:200px;background:#fff;border:1px solid #ccd7e5;border-radius:12px;padding:12px;color:#111;display:grid;grid-template-columns:1fr 96px;gap:8px;align-items:center}.brand{font-weight:900;font-size:18px}.model{font-weight:900;font-size:17px;margin-top:8px}.cat{font-size:13px;margin-top:4px}.code{font-size:11px;color:#444;margin-top:8px}.qr{background:#fff;border:1px solid #ddd;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.toastWrap{position:fixed;top:16px;right:16px;z-index:99;display:grid;gap:8px}.toast{background:#173152;color:#fff;border-radius:14px;padding:12px 14px;font-weight:800;box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.print-only{display:none}@media print{.no-print{display:none!important}.print-only{display:block}.label-sheet{display:grid;grid-template-columns:repeat(2,58mm);gap:2mm}.print-label{width:58mm;height:40mm;border:1px solid #ddd;padding:3mm;display:grid;grid-template-columns:1fr 18mm;gap:2mm;align-items:center;font-family:Arial}.print-label .brand{font-size:12pt}.print-label .model{font-size:10pt}.print-label .cat{font-size:8pt}.print-label .code{font-size:7pt}}
+@media(max-width:900px){.stats,.layout,.grid2,.grid3{grid-template-columns:1fr}.header{display:block}.actions{margin-top:12px}}
+
+.removable{gap:6px;align-items:center}
+.mini-x{
+  border:0;
+  background:rgba(0,0,0,.08);
+  color:inherit;
+  width:18px;
+  height:18px;
+  min-width:18px;
+  padding:0;
+  border-radius:999px;
+  font-size:14px;
+  line-height:18px;
+  font-weight:900;
+  margin-left:4px;
+}
+.mini-x:hover{transform:none;box-shadow:none;background:rgba(0,0,0,.15)}
+
+
+.mini-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.product-filter.active{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff}
+.archived-row{opacity:.62;background:#f7f7f7}
+
+
+.scan-box{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#eef6ff,#f8fbff);
+  border:1px solid #dce8f5;
+}
+.product-hero{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:start;
+  padding:16px;
+  border-radius:22px;
+  background:linear-gradient(135deg,#f4f8fd,#ffffff);
+  border:1px solid #e3edf8;
+  margin-bottom:12px;
+}
+.product-hero h2{
+  margin:4px 0 8px;
+  font-size:26px;
+  letter-spacing:-.03em;
+}
+.qr-card{
+  text-align:center;
+  min-width:126px;
+}
+.code-mini{
+  margin-top:6px;
+  font-size:10px;
+  color:#64748b;
+  word-break:break-all;
+  max-width:125px;
+}
+.metric-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin:12px 0;
+}
+.metric{
+  background:#f8fbfe;
+  border:1px solid #e6eef7;
+  border-radius:18px;
+  padding:13px;
+}
+.metric span{
+  display:block;
+  color:#64748b;
+  font-size:12px;
+  margin-bottom:6px;
+}
+.metric b{
+  font-size:18px;
+}
+.price-main{
+  color:#14532d;
+  font-weight:900;
+}
+.quick-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:10px 0 4px;
+}
+.history-section{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #e7eef7;
+}
+.product-filter{
+  padding:9px 12px;
+}
+.card{
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.card:hover{
+  border-color:#cfdded;
+}
+tbody tr{
+  transition:background .12s ease, transform .12s ease;
+}
+tbody tr:hover{
+  transform:translateY(-1px);
+}
+.selected{
+  background:#dbeafe!important;
+  box-shadow:inset 4px 0 0 #2563eb;
+}
+@media(max-width:1100px){
+  .metric-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:720px){
+  .product-hero{grid-template-columns:1fr}
+  .metric-grid{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+<div id="toastWrap" class="toastWrap"></div>
+<div class="wrap">
+  <div class="header no-print">
+    <div><h1>ТехноМир Store</h1><p>Удобный склад: товары, поступления, продажи, остатки и QR-этикетки 58×40</p></div>
+    <div class="actions"><button class="btn2" onclick="backup()">⬇️ Резерв</button><button class="btn2" onclick="restore()">♻️ Восстановить</button></div>
+  </div>
+
+  <div class="stats no-print">
+    <div class="card"><div class="stat-title">📦 В наличии</div><div id="stStock" class="stat-value">0</div></div>
+    <div class="card"><div class="stat-title">🏷️ Моделей</div><div id="stModels" class="stat-value">0</div></div>
+    <div class="card"><div class="stat-title">💰 Закупка остатков</div><div id="stBuy" class="stat-value">0 ₽</div></div>
+    <div class="card"><div class="stat-title">🧾 Продаж сегодня</div><div id="stToday" class="stat-value">0</div></div>
+  </div>
+
+  <div class="tabs no-print">
+    <button id="tab-products" class="btn2 tab active" onclick="view('products')">📋 Товары</button>
+    <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">➕ Поступление</button>
+    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">📥 Журнал поступлений</button>
+    <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
+    <button id="tab-labels" class="btn2 tab" onclick="view('labels')">🏷️ Этикетки</button>
+    <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙️ Настройки</button>
+    <button id="tab-reports" class="btn2 tab" onclick="view('reports')">📊 Отчёты</button>
+  </div>
+
+  <section id="view-products" class="view no-print">
+    <div class="layout">
+      <div class="card">
+        <div class="scan-box">
+          <div>
+            <b>Быстрый поиск / сканер</b>
+            <div class="muted">Сканируй QR или введи модель. Список остаётся видимым, выбранный товар подсвечивается.</div>
+          </div>
+        </div>
+        <div class="search"><input id="search" placeholder="Поиск по модели, названию, бренду или QR" oninput="renderProducts()"><button class="btn2" onclick="search.value='';renderProducts()">Сброс</button></div>
+        <div class="mini-tabs" style="margin-bottom:12px">
+          <button class="btn2 product-filter active" data-filter="all" onclick="setProductFilter('all')">Все</button>
+          <button class="btn2 product-filter" data-filter="stock" onclick="setProductFilter('stock')">В наличии</button>
+          <button class="btn2 product-filter" data-filter="noPrice" onclick="setProductFilter('noPrice')">Без цены</button>
+          <button class="btn2 product-filter" data-filter="zero" onclick="setProductFilter('zero')">Нулевой остаток</button>
+          <button class="btn2 product-filter" data-filter="archive" onclick="setProductFilter('archive')">Архив</button>
+        </div>
+        <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th>Продажа</th><th>Статус</th></tr></thead><tbody id="productsTable"></tbody></table></div>
+      </div>
+      <div class="card" id="details"><h2>Карточка товара</h2><p class="muted">Выбери товар или добавь поступление.</p></div>
+    </div>
+  </section>
+
+  <section id="view-receipt" class="view no-print hidden">
+    <div class="card">
+      <h2>Приёмка товара / начальные остатки</h2><p class="muted">Если модель уже есть в базе, новое поступление НЕ создаст дубль, а увеличит остаток этой модели. Для старых товаров используй “внести остаток”, для новых накладных — “провести поступление”.</p>
+      <div class="grid2">
+        <input id="invNo" placeholder="Номер накладной">
+        <input id="invDate" type="date">
+        <select id="supplier"></select>
+        <input id="supplierNew" placeholder="Новый поставщик">
+        <textarea id="comment" placeholder="Примечание к поступлению, необязательно" style="grid-column:1/-1"></textarea>
+      </div>
+      <h3 style="margin-top:18px">Добавить товар в приёмку</h3>
+      <div class="grid2">
+        <select id="category"></select><input id="categoryNew" placeholder="Новая категория">
+        <input id="brand" placeholder="Бренд, например LG"><input id="model" placeholder="Модель, например F2Y1NS3W">
+        <input id="name" placeholder="Название/описание"><input id="qty" type="number" min="1" value="1" placeholder="Количество">
+        <input id="buy" type="number" min="0" placeholder="Закупочная цена"><input id="sell" type="number" min="0" placeholder="Продажная цена, можно позже">
+      </div>
+      <div class="actions"><button class="btn" onclick="addLine()">➕ Добавить товар в список</button><button class="green" onclick="saveReceipt()">✅ Провести поступление</button><button class="btn2" onclick="saveInitialStock()">📦 Внести остаток</button></div>
+      <h3 style="margin-top:18px">Товары, подготовленные к сохранению</h3><p class="muted">Можно добавить несколько моделей, а потом сохранить всё одной накладной. Если модель уже существует — увеличится её остаток.</p>
+      <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Кол-во</th><th>Закупка</th><th>Сумма</th><th></th></tr></thead><tbody id="linesTable"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="view-sales" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>Продажа товара</h2>
+        <div class="grid2">
+          <input id="saleSearch" placeholder="Сканируй QR или введи модель/код" oninput="renderSaleMatches()">
+          <input id="saleQty" type="number" min="1" value="1" placeholder="Количество">
+          <input id="salePrice" type="number" min="0" placeholder="Цена продажи">
+          <select id="saleMethod"><option>Наличные</option><option>Перевод</option><option>Рассрочка</option><option>Другое</option></select>
+          <textarea id="saleComment" placeholder="Комментарий к продаже, необязательно" style="grid-column:1/-1"></textarea>
+        </div>
+        <div class="actions"><button class="btn" onclick="sellProduct()">🛒 Продать</button><button class="btn2" onclick="resetSaleSearch()">Сбросить поиск</button></div>
+        <div id="saleSelectedInfo" class="muted" style="margin-top:10px"></div><h3 style="margin-top:18px">Найденные товары</h3>
+        <table><tbody id="saleMatches"></tbody></table>
+      </div>
+      <div class="card"><h2>История продаж</h2><div style="overflow:auto;max-height:520px"><table><thead><tr><th>Дата</th><th>Товар</th><th>Кол-во</th><th>Цена</th></tr></thead><tbody id="salesTable"></tbody></table></div></div>
+    </div>
+  </section>
+
+  <section id="view-labels" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>QR-этикетки 58×40</h2><p class="muted">Цена не печатается. QR содержит код модели.</p>
+        <div class="grid2"><input id="labelSearch" placeholder="Найти товар" oninput="renderLabelMatches()"><select id="labelMode"><option value="one">1 этикетка на модель</option><option value="stock">По текущему остатку</option></select></div>
+        <div class="actions"><button class="btn" onclick="printSelected()">🖨️ Печать выбранного</button><button class="btn2" onclick="printAll()">🖨️ Печать всех остатков</button><button class="btn2" onclick="resetLabelSearch()">Сбросить выбор</button></div>
+        <div id="labelSelectedInfo" class="muted" style="margin-top:10px"></div><h3 style="margin-top:18px">Товары</h3><table><tbody id="labelMatches"></tbody></table>
+      </div>
+      <div class="card"><h2>Предпросмотр</h2><div id="labelPreview" class="label"><div><div class="brand">ТехноМир</div><div class="model">Выбери товар</div><div class="cat">Категория</div><div class="code">QR-код</div></div><div class="qr"></div></div></div>
+    </div>
+  </section>
+
+  <section id="view-settings" class="view no-print hidden">
+    <div class="layout">
+      <div class="card"><h2>Категории</h2><div class="grid2"><input id="newCat" placeholder="Новая категория"><button class="btn" onclick="addCategory()">Добавить</button></div><div id="cats" style="margin-top:12px"></div></div>
+      <div class="card"><h2>Поставщики</h2><div class="grid2"><input id="newSup" placeholder="Новый поставщик"><button class="btn" onclick="addSupplier()">Добавить</button></div><div id="sups" style="margin-top:12px"></div></div>
+    </div>
+  </section>
+
+
+  <section id="view-receipts" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>Журнал поступлений</h2>
+        <p class="muted">Здесь можно открыть накладную/поступление и исправить номер, дату, поставщика, количество или закупочную цену.</p>
+        <div class="search"><input id="receiptSearch" placeholder="Поиск по номеру, поставщику или товару" oninput="renderReceiptsJournal()"><button class="btn2" onclick="E('receiptSearch').value='';renderReceiptsJournal()">Сброс</button></div>
+        <div style="overflow:auto">
+          <table>
+            <thead><tr><th>Поступление</th><th>Поставщик</th><th>Товары</th><th>Сумма</th></tr></thead>
+            <tbody id="receiptsJournalTable"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="receiptDetails">
+        <h2>Карточка поступления</h2>
+        <p class="muted">Выбери поступление из списка.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-reports" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>Отчёты</h2><p class="muted">Короткая сводка для контроля продаж, прибыли и товаров без цены.</p>
+        <div class="grid3">
+          <div class="box"><span class="muted">Продажи сегодня</span><br><b id="repTodaySales">0 ₽</b></div>
+          <div class="box"><span class="muted">Прибыль сегодня</span><br><b id="repTodayProfit">0 ₽</b></div>
+          <div class="box"><span class="muted">Товаров без цены</span><br><b id="repNoPrice">0</b></div>
+        </div>
+        <h3 style="margin-top:18px">Товары без продажной цены</h3>
+        <table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th></th></tr></thead><tbody id="noPriceTable"></tbody></table>
+      </div>
+      <div class="card">
+        <h2>Остатки и архив</h2>
+        <h3>Нулевой остаток</h3>
+        <table><tbody id="zeroStockTable"></tbody></table>
+        <h3 style="margin-top:18px">Архив</h3>
+        <table><tbody id="archiveTable"></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <div id="printArea" class="print-only"></div>
+</div>
+<script>
+const KEY="tehnomir_store_v1";
+const E = (id) => document.getElementById(id);
+function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[]}}
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, lines=[], productFilter="all";
+function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
+function rub(v){return Math.round(Number(v||0)).toLocaleString("ru-RU")+" ₽"} function today(){return new Date().toISOString().slice(0,10)} function fd(v){return v?new Date(v+"T00:00").toLocaleDateString("ru-RU"):"—"}
+function uid(p){return p+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7)} function slug(v){return String(v||"").toUpperCase().replace(/[^A-ZА-ЯЁ0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60)} function code(b,m){return"TM-MODEL-"+slug([b,m].filter(Boolean).join("-"))}
+function stock(p){let inn=state.receipts.flatMap(r=>r.lines).filter(l=>l.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let out=state.sales.filter(s=>s.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);return inn-out}
+function receiptLines(p){return state.receipts.flatMap(r=>r.lines.map(l=>({...l,date:r.date,supplier:r.supplier,invoice:r.number}))).filter(l=>l.productId===p.id)}
+function lastBuy(p){let a=receiptLines(p);return a.length?Number(a[a.length-1].buyPrice||0):0} function avgBuy(p){let a=receiptLines(p),q=a.reduce((s,l)=>s+Number(l.qty||0),0),sum=a.reduce((s,l)=>s+Number(l.qty||0)*Number(l.buyPrice||0),0);return q?sum/q:lastBuy(p)}
+
+function lastReceiptInfo(p){
+  const arr = receiptLines(p);
+  if(!arr.length) return "поступлений нет";
+  const last = arr[arr.length-1];
+  return `посл. приход: ${fd(last.date)} · ${last.qty} шт`;
+}
+
+function prepareReceiptForProduct(id){
+  const p = state.products.find(x=>x.id===id);
+  if(!p) return;
+
+  E("category").value = state.categories.includes(p.category) ? p.category : "";
+  E("categoryNew").value = state.categories.includes(p.category) ? "" : (p.category || "");
+  E("brand").value = p.brand || "";
+  E("model").value = p.model || "";
+  E("name").value = p.name || "";
+  E("qty").value = 1;
+  E("buy").value = lastBuy(p) || "";
+  E("sell").value = p.sellPrice || "";
+
+  view("receipt");
+  toast("Карточка товара перенесена в поступление. Укажи количество, закупку и поставщика.");
+}
+
+function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
+function view(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById("view-"+v).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+v).classList.add("active");render()}
+function render(){renderSelects();renderStats();renderProducts();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
+function renderStats(){
+  const active=state.products.filter(p=>!p.archived);
+  stStock.textContent=active.reduce((s,p)=>s+Math.max(0,stock(p)),0);
+  stModels.textContent=active.length;
+  stBuy.textContent=rub(active.reduce((s,p)=>s+Math.max(0,stock(p))*avgBuy(p),0));
+  stToday.textContent=state.sales.filter(s=>s.date===today()).reduce((a,s)=>a+Number(s.qty||0),0);
+}
+function setProductFilter(f){
+  productFilter=f;
+  document.querySelectorAll(".product-filter").forEach(b=>b.classList.toggle("active", b.dataset.filter===f));
+  renderProducts();
+}
+
+function productMatchesFilter(p){
+  const st=stock(p);
+  if(productFilter==="stock") return !p.archived && st>0;
+  if(productFilter==="noPrice") return !p.archived && !Number(p.sellPrice||0);
+  if(productFilter==="zero") return !p.archived && st<=0;
+  if(productFilter==="archive") return !!p.archived;
+  return !p.archived;
+}
+
+function renderProducts(){
+  let q=(search?.value||"").toLowerCase();
+  let arr=state.products
+    .filter(p=>productMatchesFilter(p))
+    .filter(p=>[p.code,p.category,p.brand,p.model,p.name].join(" ").toLowerCase().includes(q));
+
+  productsTable.innerHTML=arr.map(p=>{
+    const st=stock(p);
+    return `<tr class="${p.id===selectedProductId?'selected':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
+      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span><br>${p.name||""}${!p.sellPrice?'<br><span class="pill warn">без цены</span>':''}${p.archived?'<br><span class="pill warn">архив</span>':''}</td>
+      <td><b>${st}</b> шт</td>
+      <td>посл. ${rub(lastBuy(p))}<br><span class="muted">сред. ${rub(avgBuy(p))}</span><br><span class="muted">${lastReceiptInfo(p)}</span></td>
+      <td>${p.sellPrice?rub(p.sellPrice):"<span class='pill warn'>не указана</span>"}</td>
+      <td>${p.archived?"<span class='pill warn'>Архив</span>":st>0?"<span class='pill ok'>В наличии</span>":"<span class='pill bad'>Нет</span>"}</td>
+    </tr>`
+  }).join("");
+
+  if(!arr.some(p=>p.id===selectedProductId) && arr.length) selectedProductId=arr[0].id;
+  renderDetails();
+}
+
+function selectProduct(id){selectedProductId=id;saleId=id;labelId=id;let p=state.products.find(x=>x.id===id);if(p){saleSearch.value=p.code;labelSearch.value=p.code;if(p.sellPrice)salePrice.value=p.sellPrice}render()}
+function renderDetails(){
+  let p=state.products.find(x=>x.id===selectedProductId);
+  if(!p){
+    details.innerHTML="<h2>Карточка товара</h2><p class='muted'>Выбери товар или добавь поступление.</p>";
+    return;
+  }
+
+  let ins=receiptLines(p);
+  let sales=state.sales.filter(s=>s.productId===p.id);
+  const st=stock(p);
+  const statusPill = p.archived
+    ? "<span class='pill warn'>Архив</span>"
+    : st>0
+      ? "<span class='pill ok'>В наличии</span>"
+      : "<span class='pill bad'>Нет остатка</span>";
+  const pricePill = p.sellPrice
+    ? `<span class="price-main">${rub(p.sellPrice)}</span>`
+    : "<span class='pill warn'>Цена не указана</span>";
+
+  details.innerHTML=`
+    <div class="product-hero">
+      <div>
+        <div class="muted">Карточка товара</div>
+        <h2>${p.brand||""} ${p.model||""}</h2>
+        <div>${statusPill} ${!p.sellPrice?"<span class='pill warn'>Без цены</span>":""}</div>
+        <p class="muted" style="margin-top:8px">${p.name||""}</p>
+      </div>
+      <div class="qr-card">
+        <div id="qrDet" class="qr" style="width:118px;height:118px"></div>
+        <div class="code-mini">${p.code}</div>
+      </div>
+    </div>
+
+    <div class="metric-grid">
+      <div class="metric"><span>Остаток</span><b>${st} шт</b></div>
+      <div class="metric"><span>Продажная цена</span><b>${pricePill}</b></div>
+      <div class="metric"><span>Последняя закупка</span><b>${rub(lastBuy(p))}</b></div>
+      <div class="metric"><span>Средняя закупка</span><b>${rub(avgBuy(p))}</b></div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="btn2" onclick="editProduct('${p.id}')">✏️ Редактировать</button>
+      <button class="btn2" onclick="prepareReceiptForProduct('${p.id}')">➕ Приход</button>
+      <button class="btn" onclick="prepareSale('${p.id}')">🛒 Продать</button>
+      <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button>
+      <button class="btn2" onclick="prepareLabel('${p.id}')">🏷️ Этикетка</button>
+      <button class="btn2" onclick="toggleArchiveProduct('${p.id}')">${p.archived?'↩️ Вернуть':'📦 В архив'}</button>
+      <button class="danger" onclick="deleteProduct('${p.id}')">🗑️ Удалить ошибочный</button>
+    </div>
+
+    <div class="history-section">
+      <h3>История поступлений</h3>
+      ${ins.length?`<table><thead><tr><th>Дата</th><th>Поставщик</th><th>Накладная</th><th>Кол-во</th><th>Закупка</th></tr></thead><tbody>${ins.map(l=>`<tr><td>${fd(l.date)}</td><td>${l.supplier}</td><td>${l.invoice||"—"}</td><td>${l.qty}</td><td>${rub(l.buyPrice)}</td></tr>`).join("")}</tbody></table>`:"<p class='muted'>Поступлений нет.</p>"}
+    </div>
+
+    <div class="history-section">
+      <h3>История продаж</h3>
+      ${sales.length?`<table><thead><tr><th>Дата</th><th>Кол-во</th><th>Цена</th><th>Метод</th></tr></thead><tbody>${sales.map(s=>`<tr><td>${fd(s.date)}</td><td>${s.qty}</td><td>${rub(s.price)}</td><td>${s.method}</td></tr>`).join("")}</tbody></table>`:"<p class='muted'>Продаж нет.</p>"}
+    </div>
+  `;
+  makeQR("qrDet",p.code,110);
+}
+
+function editProduct(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+
+  const category=prompt("Категория:", p.category||"") ?? null;
+  if(category===null) return;
+  const brand=prompt("Бренд:", p.brand||"") ?? null;
+  if(brand===null) return;
+  const model=prompt("Модель:", p.model||"") ?? null;
+  if(model===null) return;
+  const name=prompt("Название/описание:", p.name||"") ?? null;
+  if(name===null) return;
+  const sell=prompt("Продажная цена:", p.sellPrice||"") ?? null;
+  if(sell===null) return;
+
+  const oldCode=p.code;
+  p.category=category.trim()||"Прочее";
+  p.brand=brand.trim();
+  p.model=model.trim();
+  p.name=name.trim();
+  p.sellPrice=Number(sell||0);
+
+  const newCode=code(p.brand,p.model);
+  // Если новый код не занят другим товаром, обновляем QR-код.
+  if(!state.products.some(x=>x.id!==p.id && x.code===newCode)) {
+    p.code=newCode;
+  } else {
+    p.code=oldCode;
+    toast("Код модели уже существует, QR-код оставлен прежним");
+  }
+
+  if(p.category && !state.categories.includes(p.category)) state.categories.push(p.category);
+
+  save();
+  render();
+  toast("Товар отредактирован");
+}
+
+function editPrice(id){let p=state.products.find(x=>x.id===id),v=prompt("Новая продажная цена:",p.sellPrice||"");if(v===null)return;p.sellPrice=Number(v||0);save();render();toast("Цена обновлена")}
+function prepareSale(id){let p=state.products.find(x=>x.id===id);saleId=id;E("saleSearch").value="";E("salePrice").value=p.sellPrice||"";view("sales")} function prepareLabel(id){labelId=id; E("labelSearch").value=""; view("labels")}
+function renderSelects(){
+  const visibleSuppliers = state.suppliers.filter(s => s !== "Начальные остатки");
+  supplier.innerHTML='<option value="">Выбрать поставщика</option>'+visibleSuppliers.map(s=>`<option>${s}</option>`).join("");
+  category.innerHTML='<option value="">Категория</option>'+state.categories.map(c=>`<option>${c}</option>`).join("");
+}
+
+function currentLineIsFilled(){
+  return !!(
+    E("model").value.trim() ||
+    E("brand").value.trim() ||
+    E("name").value.trim() ||
+    E("buy").value ||
+    E("sell").value ||
+    E("qty").value
+  );
+}
+
+function addCurrentLineIfNeeded(){
+  if (currentLineIsFilled()) {
+    const before = lines.length;
+    addLine();
+    return lines.length > before;
+  }
+  return false;
+}
+
+function addLine(){
+  let cat=(E("categoryNew").value.trim()||E("category").value).trim();
+  let b=E("brand").value.trim();
+  let m=E("model").value.trim();
+  let n=E("name").value.trim();
+  let q=Number(E("qty").value||0);
+  let buyP=Number(E("buy").value||0);
+  let sellP=Number(E("sell").value||0);
+
+  if(!cat) cat="Прочее";
+  if(!m||q<=0){
+    toast("Заполни модель и количество");
+    return false;
+  }
+
+  lines.push({category:cat,brand:b,model:m,name:n,qty:q,buyPrice:buyP,sellPrice:sellP});
+  if(!state.categories.includes(cat))state.categories.push(cat);
+
+  ["categoryNew","brand","model","name","buy","sell"].forEach(id=>E(id).value="");
+  E("qty").value=1;
+  render();
+  toast("Товар добавлен в список");
+  return true;
+}
+
+function renderLines(){
+  if(!lines.length){
+    E("linesTable").innerHTML=`<tr><td colspan="5" class="muted">Список пока пуст. Заполни товар выше и нажми “Добавить товар в список”. Если нажмёшь “Сохранить всё”, текущий заполненный товар добавится автоматически.</td></tr>`;
+    return;
+  }
+  E("linesTable").innerHTML=lines.map((l,i)=>`<tr><td><b>${l.brand||""} ${l.model}</b><br><span class="muted">${l.category}</span><br>${l.name||""}</td><td>${l.qty}</td><td>${rub(l.buyPrice)}</td><td>${rub(l.qty*l.buyPrice)}</td><td><button class="danger" onclick="lines.splice(${i},1);renderLines()">Удалить</button></td></tr>`).join("");
+}
+function findOrCreate(l){
+  let c=code(l.brand,l.model);
+  let normalizedModel=String(l.model||"").trim().toUpperCase();
+  let p=state.products.find(x=>x.code===c);
+
+  // Если бренд не указали или написали иначе, но модель совпала — не создаём дубль.
+  if(!p && normalizedModel){
+    p=state.products.find(x=>String(x.model||"").trim().toUpperCase()===normalizedModel);
+  }
+
+  if(!p){
+    p={
+      id:uid("p"),
+      code:c,
+      category:l.category,
+      brand:l.brand,
+      model:l.model,
+      name:l.name||[l.brand,l.model].filter(Boolean).join(" "),
+      sellPrice:Number(l.sellPrice||0)
+    };
+    state.products.unshift(p);
+  }else{
+    if(l.brand && !p.brand) p.brand=l.brand;
+    if(l.sellPrice) p.sellPrice=Number(l.sellPrice);
+    if(l.name) p.name=l.name;
+    if(l.category) p.category=l.category;
+  }
+  return p;
+}
+function saveReceipt(){
+  addCurrentLineIfNeeded();
+  let sup=(E("supplierNew").value.trim()||E("supplier").value).trim();
+  let date=E("invDate").value||today();
+
+  if(!sup){
+    toast("Поставщик не выбран. Для старых товаров используй “Начальный остаток”");
+    return;
+  }
+  if(!lines.length){
+    toast("Добавь товар в список");
+    return;
+  }
+
+  if(!state.suppliers.includes(sup))state.suppliers.push(sup);
+
+  let r={
+    id:uid("r"),
+    number:E("invNo").value.trim(),
+    date,
+    supplier:sup,
+    comment:E("comment").value.trim(),
+    lines:[]
+  };
+
+  lines.forEach(l=>{
+    let p=findOrCreate(l);
+    r.lines.push({productId:p.id,qty:l.qty,buyPrice:l.buyPrice,sellPrice:l.sellPrice});
+    selectedProductId=p.id;
+  });
+
+  state.receipts.unshift(r);
+  lines=[];
+  ["invNo","supplierNew","comment"].forEach(id=>E(id).value="");
+  save();
+  render();
+  toast(`Поступление сохранено. Обновлено моделей: ${r.lines.length}`);
+  view("products");
+}
+
+function saveInitialStock(){
+  addCurrentLineIfNeeded();
+
+  if(!lines.length){
+    toast("Добавь товар в список");
+    return;
+  }
+
+  let r={
+    id:uid("r"),
+    number:"Начальный остаток",
+    date:today(),
+    supplier:"Начальные остатки",
+    comment:"Товар был в наличии до запуска программы",
+    lines:[]
+  };
+
+  if(!state.suppliers.includes("Начальные остатки"))state.suppliers.push("Начальные остатки");
+
+  lines.forEach(l=>{
+    let p=findOrCreate(l);
+    r.lines.push({productId:p.id,qty:l.qty,buyPrice:l.buyPrice,sellPrice:l.sellPrice});
+    selectedProductId=p.id;
+  });
+
+  state.receipts.unshift(r);
+  lines=[];
+  save();
+  render();
+  toast(`Начальные остатки сохранены. Обновлено моделей: ${r.lines.length}`);
+  view("products");
+}
+
+function renderSaleMatches(){let q=(saleSearch?.value||"").toLowerCase();let exact=productByCode(q);if(exact)saleId=exact.id;let arr=state.products.filter(p=>[p.code,p.brand,p.model,p.name,p.category].join(" ").toLowerCase().includes(q)).slice(0,20);saleMatches.innerHTML=arr.map(p=>`<tr class="${p.id===saleId?'selected':''}" onclick="saleId='${p.id}';saleSearch.value='${p.code}';salePrice.value='${p.sellPrice||""}';renderSaleMatches()"><td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td><td>${stock(p)} шт</td><td>${p.sellPrice?rub(p.sellPrice):"цена не указана"}</td></tr>`).join("")}
+
+function resetSaleSearch(){
+  E("saleSearch").value="";
+  E("saleQty").value=1;
+  E("salePrice").value="";
+  E("saleComment").value="";
+  saleId=null;
+  renderSaleMatches();
+}
+
+function selectSaleProduct(id){
+  saleId=id;
+  const p=state.products.find(x=>x.id===id);
+  if(p && p.sellPrice) E("salePrice").value=p.sellPrice;
+  renderSaleMatches();
+}
+
+function renderSaleMatches(){
+  let q=(E("saleSearch")?.value||"").toLowerCase().trim();
+  let exact=productByCode(q);
+  if(exact) saleId=exact.id;
+
+  let arr=state.products
+    .filter(p=>!p.archived)
+    .filter(p=>!q || [p.code,p.brand,p.model,p.name,p.category].join(" ").toLowerCase().includes(q))
+    .slice(0,50);
+
+  E("saleMatches").innerHTML=arr.map(p=>`
+    <tr class="${p.id===saleId?'selected':''}" onclick="selectSaleProduct('${p.id}')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td>
+      <td>${stock(p)} шт</td>
+      <td>${p.sellPrice?rub(p.sellPrice):"цена не указана"}</td>
+    </tr>
+  `).join("");
+
+  const selected=state.products.find(x=>x.id===saleId);
+  const info=E("saleSelectedInfo");
+  if(info) info.innerHTML=selected
+    ? `Выбрано для продажи: <b>${selected.brand||""} ${selected.model}</b> · остаток ${stock(selected)} шт`
+    : `Выбери товар из списка или сканируй QR. Список не будет скрываться после выбора.`;
+}
+
+function toggleArchiveProduct(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+  p.archived=!p.archived;
+  if(p.archived && selectedProductId===id){
+    const next=state.products.find(x=>!x.archived);
+    if(next) selectedProductId=next.id;
+  }
+  save();
+  render();
+  toast(p.archived ? "Товар перенесён в архив" : "Товар возвращён из архива");
+}
+
+function deleteProduct(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+
+  const st=stock(p);
+  const salesCount=state.sales.filter(s=>s.productId===id).length;
+  const receiptCount=receiptLines(p).length;
+
+  const warning = st !== 0
+    ? `У товара остаток ${st} шт. Это действие полностью удаляет товар и историю. Обычно лучше использовать “В архив”. Удалить всё равно?`
+    : `Полностью удалить ошибочный товар "${p.brand||""} ${p.model||""}" из базы?`;
+
+  if(!confirm(warning)) return;
+
+  if((salesCount || receiptCount) && !confirm("У товара есть история поступлений/продаж. При удалении эта история тоже будет удалена. Продолжить?")) return;
+
+  state.products = state.products.filter(x=>x.id!==id);
+  state.receipts.forEach(r=>r.lines = r.lines.filter(l=>l.productId!==id));
+  state.receipts = state.receipts.filter(r=>r.lines.length);
+  state.sales = state.sales.filter(s=>s.productId!==id);
+
+  if(selectedProductId===id) selectedProductId=state.products[0]?.id||null;
+  if(saleId===id) saleId=null;
+  if(labelId===id) labelId=null;
+
+  save();
+  render();
+  toast("Товар удалён");
+}
+
+function sellProduct(){let p=state.products.find(x=>x.id===saleId)||productByCode(saleSearch.value),q=Number(saleQty.value||0),price=Number(salePrice.value||0);if(!p){toast("Выбери товар");return}if(q<=0){toast("Укажи количество");return}if(q>stock(p)){toast("Недостаточно на складе");return}if(!price){toast("Укажи цену продажи");return}state.sales.unshift({id:uid("s"),productId:p.id,date:today(),qty:q,price,method:saleMethod.value,comment:saleComment.value.trim()});p.sellPrice=price;save();saleQty.value=1;saleComment.value="";render();toast("Продажа сохранена")}
+function renderSales(){salesTable.innerHTML=state.sales.map(s=>{let p=state.products.find(x=>x.id===s.productId)||{};return`<tr><td>${fd(s.date)}</td><td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.code||""}</span></td><td>${s.qty}</td><td>${rub(s.price)}<br><span class="muted">${s.method}</span></td></tr>`}).join("")}
+function renderLabelMatches(){
+  let q=(E("labelSearch")?.value||"").toLowerCase().trim();
+  let exact=productByCode(q);
+  if(exact) labelId=exact.id;
+
+  let arr=state.products
+    .filter(p=>!p.archived)
+    .filter(p=>!q || [p.code,p.brand,p.model,p.name,p.category].join(" ").toLowerCase().includes(q))
+    .slice(0,60);
+
+  E("labelMatches").innerHTML=arr.map(p=>`
+    <tr class="${p.id===labelId?'selected':''}" onclick="selectLabelProduct('${p.id}')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.category} · ${p.code}</span></td>
+      <td>${stock(p)} шт</td>
+    </tr>
+  `).join("");
+
+  const selected=state.products.find(x=>x.id===labelId);
+  const info=E("labelSelectedInfo");
+  if(info) info.innerHTML=selected
+    ? `Выбрано для этикетки: <b>${selected.brand||""} ${selected.model}</b> · остаток ${stock(selected)} шт`
+    : `Выбери товар из списка. Список не будет скрываться после выбора.`;
+
+  renderLabelPreview();
+}
+
+function selectLabelProduct(id){
+  labelId=id;
+  renderLabelMatches();
+}
+
+function renderLabelPreview(){
+  let p=state.products.find(x=>x.id===labelId);
+  if(!p){
+    E("labelPreview").innerHTML=`<div><div class="brand">ТехноМир</div><div class="model">Выбери товар</div><div class="cat">Категория</div><div class="code">QR-код</div></div><div class="qr"></div>`;
+    return;
+  }
+  labelPreview.innerHTML=`<div><div class="brand">ТехноМир</div><div class="model">${p.brand||""} ${p.model}</div><div class="cat">${p.category||""}</div><div class="code">${p.code}</div></div><div id="qrLab" class="qr" style="width:96px;height:96px"></div>`;
+  makeQR("qrLab",p.code,88);
+}
+
+function labelHtml(p){return`<div class="print-label"><div><div class="brand">ТехноМир</div><div class="model">${p.brand||""} ${p.model||""}</div><div class="cat">${p.category||""}</div><div class="code">${p.code}</div></div><div class="qrbox" data-code="${p.code}"></div></div>`}
+function printSelected(){let p=state.products.find(x=>x.id===labelId);if(!p){toast("Выбери товар");return}let count=labelMode.value==="stock"?Math.max(1,stock(p)):1;printLabels(Array(count).fill(p))}
+function printAll(){let a=[];state.products.forEach(p=>{for(let i=0;i<Math.max(0,stock(p));i++)a.push(p)});if(!a.length){toast("Нет остатков");return}printLabels(a)}
+function printLabels(a){printArea.innerHTML=`<div class="label-sheet">${a.map(labelHtml).join("")}</div>`;printArea.querySelectorAll(".qrbox").forEach((b,i)=>renderQRInto(b,a[i].code,64));setTimeout(()=>print(),200)}
+function renderSettings(){
+  cats.innerHTML=state.categories.map(c=>`
+    <span class="pill ok removable" style="margin:4px">
+      ${c}
+      <button class="mini-x" onclick="deleteCategory('${String(c).replace(/'/g,"\\'")}')" title="Удалить категорию">×</button>
+    </span>
+  `).join("");
+
+  const visibleSuppliers = state.suppliers.filter(s=>s!=="Начальные остатки");
+  sups.innerHTML=visibleSuppliers.length
+    ? visibleSuppliers.map(s=>`
+      <span class="pill warn removable" style="margin:4px">
+        ${s}
+        <button class="mini-x" onclick="deleteSupplier('${String(s).replace(/'/g,"\\'")}')" title="Удалить поставщика">×</button>
+      </span>
+    `).join("")
+    : "<span class='muted'>Поставщиков пока нет.</span>";
+}
+
+function addCategory(){let v=newCat.value.trim();if(v&&!state.categories.includes(v))state.categories.push(v);newCat.value="";save();render()} function addSupplier(){let v=newSup.value.trim();if(v&&!state.suppliers.includes(v))state.suppliers.push(v);newSup.value="";save();render()}
+function deleteCategory(cat){
+  const used = state.products.some(p=>p.category===cat);
+  if(used && !confirm(`Категория "${cat}" используется в товарах. Удалить категорию из списка? В товарах она останется как текст.`)) return;
+  if(!used && !confirm(`Удалить категорию "${cat}"?`)) return;
+  state.categories = state.categories.filter(c=>c!==cat);
+  save();
+  render();
+  toast("Категория удалена");
+}
+
+function deleteSupplier(sup){
+  const used = state.receipts.some(r=>r.supplier===sup);
+  if(used && !confirm(`Поставщик "${sup}" есть в истории поступлений. Удалить его из списка выбора? В истории он останется.`)) return;
+  if(!used && !confirm(`Удалить поставщика "${sup}"?`)) return;
+  state.suppliers = state.suppliers.filter(s=>s!==sup);
+  save();
+  render();
+  toast("Поставщик удалён");
+}
+
+function resetLabelSearch(){
+  E("labelSearch").value="";
+  labelId=null;
+  renderLabelMatches();
+}
+
+
+
+function receiptTotal(r){
+  return (r.lines||[]).reduce((sum,l)=>sum+Number(l.qty||0)*Number(l.buyPrice||0),0);
+}
+
+function receiptProductsText(r){
+  return (r.lines||[]).map(l=>{
+    const p=state.products.find(x=>x.id===l.productId)||{};
+    return `${p.brand||""} ${p.model||""} — ${l.qty} шт`;
+  }).join("; ");
+}
+
+function selectReceipt(id){
+  selectedReceiptId=id;
+  renderReceiptsJournal();
+}
+
+function renderReceiptsJournal(){
+  const table=E("receiptsJournalTable");
+  if(!table) return;
+
+  const q=(E("receiptSearch")?.value||"").toLowerCase();
+  const arr=state.receipts.filter(r=>[
+    r.number,r.date,r.supplier,receiptProductsText(r)
+  ].join(" ").toLowerCase().includes(q));
+
+  if(!arr.some(r=>r.id===selectedReceiptId) && arr.length) selectedReceiptId=arr[0].id;
+
+  table.innerHTML=arr.map(r=>`
+    <tr class="${r.id===selectedReceiptId?'selected':''}" onclick="selectReceipt('${r.id}')">
+      <td><b>${r.number||"Без номера"}</b><br><span class="muted">${fd(r.date)}</span></td>
+      <td>${r.supplier||"—"}</td>
+      <td>${receiptProductsText(r)||"—"}</td>
+      <td><b>${rub(receiptTotal(r))}</b></td>
+    </tr>
+  `).join("") || `<tr><td colspan="4" class="muted">Поступлений пока нет.</td></tr>`;
+
+  renderReceiptDetails();
+}
+
+function renderReceiptDetails(){
+  const box=E("receiptDetails");
+  if(!box) return;
+  const r=state.receipts.find(x=>x.id===selectedReceiptId);
+
+  if(!r){
+    box.innerHTML=`<h2>Карточка поступления</h2><p class="muted">Выбери поступление из списка.</p>`;
+    return;
+  }
+
+  box.innerHTML=`
+    <h2>Карточка поступления</h2>
+    <div class="box">
+      <b>${r.number||"Без номера"}</b><br>
+      <span class="muted">${fd(r.date)} · ${r.supplier||"—"}</span><br>
+      ${r.comment?`<p>${r.comment}</p>`:""}
+    </div>
+    <div class="actions">
+      <button class="btn2" onclick="editReceiptHeader('${r.id}')">✏️ Изменить шапку</button>
+      <button class="danger" onclick="deleteReceipt('${r.id}')">🗑️ Удалить поступление</button>
+    </div>
+    <h3 style="margin-top:18px">Товары в поступлении</h3>
+    <table>
+      <thead><tr><th>Товар</th><th>Кол-во</th><th>Закупка</th><th>Сумма</th><th></th></tr></thead>
+      <tbody>${(r.lines||[]).map((l,i)=>{
+        const p=state.products.find(x=>x.id===l.productId)||{};
+        return `<tr>
+          <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.code||""}</span></td>
+          <td>${l.qty}</td>
+          <td>${rub(l.buyPrice)}</td>
+          <td>${rub(Number(l.qty||0)*Number(l.buyPrice||0))}</td>
+          <td><button class="btn2" onclick="editReceiptLine('${r.id}',${i})">Изменить</button></td>
+        </tr>`;
+      }).join("")}</tbody>
+    </table>
+  `;
+}
+
+function editReceiptHeader(id){
+  const r=state.receipts.find(x=>x.id===id);
+  if(!r) return;
+
+  const number=prompt("Номер накладной:", r.number||"");
+  if(number===null) return;
+  const date=prompt("Дата в формате ГГГГ-ММ-ДД:", r.date||today());
+  if(date===null) return;
+  const supplierName=prompt("Поставщик:", r.supplier||"");
+  if(supplierName===null) return;
+  const commentText=prompt("Примечание:", r.comment||"");
+  if(commentText===null) return;
+
+  r.number=number.trim();
+  r.date=date.trim()||today();
+  r.supplier=supplierName.trim()||"—";
+  r.comment=commentText.trim();
+
+  if(r.supplier && r.supplier!=="Начальные остатки" && !state.suppliers.includes(r.supplier)) state.suppliers.push(r.supplier);
+
+  save();
+  render();
+  toast("Поступление отредактировано");
+}
+
+function editReceiptLine(id,index){
+  const r=state.receipts.find(x=>x.id===id);
+  if(!r || !r.lines[index]) return;
+
+  const l=r.lines[index];
+  const p=state.products.find(x=>x.id===l.productId)||{};
+
+  const qty=prompt(`Количество для ${p.brand||""} ${p.model||""}:`, l.qty);
+  if(qty===null) return;
+  const buy=prompt("Закупочная цена:", l.buyPrice);
+  if(buy===null) return;
+
+  const q=Number(qty||0);
+  const b=Number(buy||0);
+
+  if(q<=0){
+    toast("Количество должно быть больше 0");
+    return;
+  }
+
+  l.qty=q;
+  l.buyPrice=b;
+
+  save();
+  render();
+  toast("Строка поступления изменена");
+}
+
+function deleteReceipt(id){
+  const r=state.receipts.find(x=>x.id===id);
+  if(!r) return;
+
+  if(!confirm(`Удалить поступление "${r.number||"Без номера"}"? Остатки товаров уменьшатся на количество из этого поступления.`)) return;
+
+  const risky=(r.lines||[]).filter(l=>{
+    const p=state.products.find(x=>x.id===l.productId);
+    return p && stock(p)-Number(l.qty||0)<0;
+  });
+
+  if(risky.length && !confirm("После удаления по некоторым товарам остаток станет отрицательным, потому что уже были продажи. Всё равно удалить?")) return;
+
+  state.receipts=state.receipts.filter(x=>x.id!==id);
+  selectedReceiptId=state.receipts[0]?.id||null;
+
+  save();
+  render();
+  toast("Поступление удалено");
+}
+
+function saleCost(s){
+  const p=state.products.find(x=>x.id===s.productId);
+  return p ? avgBuy(p)*Number(s.qty||0) : 0;
+}
+
+function renderReports(){
+  if(!E("repTodaySales")) return;
+
+  const todaySales=state.sales.filter(s=>s.date===today());
+  const todayRevenue=todaySales.reduce((sum,s)=>sum+Number(s.price||0)*Number(s.qty||0),0);
+  const todayProfit=todaySales.reduce((sum,s)=>sum+(Number(s.price||0)*Number(s.qty||0)-saleCost(s)),0);
+  const noPrice=state.products.filter(p=>!p.archived && stock(p)>0 && !Number(p.sellPrice||0));
+
+  E("repTodaySales").textContent=rub(todayRevenue);
+  E("repTodayProfit").textContent=rub(todayProfit);
+  E("repNoPrice").textContent=noPrice.length;
+
+  E("noPriceTable").innerHTML=noPrice.map(p=>`
+    <tr onclick="selectedProductId='${p.id}';view('products')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td>
+      <td>${stock(p)} шт</td>
+      <td>${rub(lastBuy(p))}</td>
+      <td><button class="btn2" onclick="event.stopPropagation();editPrice('${p.id}')">Установить цену</button></td>
+    </tr>
+  `).join("") || `<tr><td class="muted" colspan="4">Товаров без цены нет.</td></tr>`;
+
+  const zero=state.products.filter(p=>!p.archived && stock(p)<=0);
+  E("zeroStockTable").innerHTML=zero.map(p=>`
+    <tr onclick="selectedProductId='${p.id}';view('products')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td>
+      <td><button class="btn2" onclick="event.stopPropagation();toggleArchiveProduct('${p.id}')">В архив</button></td>
+    </tr>
+  `).join("") || `<tr><td class="muted">Товаров с нулевым остатком нет.</td></tr>`;
+
+  const archived=state.products.filter(p=>p.archived);
+  E("archiveTable").innerHTML=archived.map(p=>`
+    <tr onclick="selectedProductId='${p.id}';productFilter='archive';view('products')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td>
+      <td><button class="btn2" onclick="event.stopPropagation();toggleArchiveProduct('${p.id}')">Вернуть</button></td>
+    </tr>
+  `).join("") || `<tr><td class="muted">Архив пуст.</td></tr>`;
+}
+
+function backup(){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));a.download="tehnomir_store_backup_"+today()+".json";a.click()} function restore(){let i=document.createElement("input");i.type="file";i.accept="application/json";i.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state={...base(),...JSON.parse(r.result)};save();render();toast("База восстановлена")};r.readAsText(f)};i.click()} function clearAll(){if(confirm("Очистить базу?")){localStorage.removeItem(KEY);state=base();selectedProductId=null;saleId=null;labelId=null;lines=[];render()}}
+function h(s){let x=0;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x} function renderQRInto(el,text,size=90){let n=21,cell=size/n,H=h(text),r="";function bit(x,y){return((H+x*73856093+y*19349663)>>>0)%3===0}function find(x,y){r+=`<rect x="${x*cell}" y="${y*cell}" width="${7*cell}" height="${7*cell}" fill="#000"/><rect x="${(x+1)*cell}" y="${(y+1)*cell}" width="${5*cell}" height="${5*cell}" fill="#fff"/><rect x="${(x+2)*cell}" y="${(y+2)*cell}" width="${3*cell}" height="${3*cell}" fill="#000"/>`}find(0,0);find(14,0);find(0,14);for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<7&&y<7)||(x>=14&&y<7)||(x<7&&y>=14))continue;if(bit(x,y))r+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#000"/>`}el.innerHTML=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg"><rect width="${size}" height="${size}" fill="#fff"/>${r}</svg>`} function makeQR(id,text,size){let el=document.getElementById(id);if(el)renderQRInto(el,text,size)}
+E("invDate").value=today();renderSelects();render();
+</script>
+</body>
+</html>
