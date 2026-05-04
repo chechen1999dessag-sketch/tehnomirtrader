@@ -1163,6 +1163,214 @@ button{white-space:nowrap}
   .task-grid-3{grid-template-columns:1fr !important}
 }
 
+
+/* v27 — premium cleanup: centered hero, compact nav, stronger selection, optional product photos */
+.header{
+  min-height:164px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  padding:28px 42px 76px !important;
+}
+.header .actions{display:none !important}
+.brand-premium{
+  width:100%;
+  justify-content:center !important;
+  text-align:center !important;
+  gap:18px !important;
+}
+.tm-mark{
+  width:78px !important;
+  height:64px !important;
+  font-size:42px !important;
+  justify-content:center !important;
+  flex:0 0 auto;
+}
+.header h1{
+  font-size:44px !important;
+}
+.header p{
+  font-size:16px !important;
+  max-width:none !important;
+}
+.control-panel{
+  margin-top:-60px !important;
+  padding:18px 18px 12px !important;
+}
+.control-panel .stats{
+  gap:16px !important;
+}
+.stat-card{
+  min-height:98px !important;
+  padding:18px 20px 16px 88px !important;
+}
+.stat-card .stat-icon{
+  width:50px !important;
+  height:50px !important;
+  left:22px !important;
+  top:24px !important;
+}
+.main-tabs{
+  overflow:visible !important;
+  flex-wrap:nowrap !important;
+  align-items:center !important;
+  padding-top:10px !important;
+}
+.main-tabs .tab,.more-btn{
+  font-size:15px !important;
+  min-height:50px !important;
+  padding:0 24px !important;
+}
+.more-menu{
+  margin-left:auto !important;
+  position:relative !important;
+  flex:0 0 auto;
+}
+.more-btn{
+  border:1px solid #e0eaf6 !important;
+  border-radius:12px !important;
+  background:#fff !important;
+}
+.more-dropdown{
+  position:absolute !important;
+  right:0 !important;
+  top:58px !important;
+  z-index:999 !important;
+  width:292px !important;
+  display:grid;
+  gap:8px;
+  padding:10px !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.98) !important;
+  border:1px solid #dbe8f7 !important;
+  box-shadow:0 24px 52px rgba(8,36,78,.18) !important;
+}
+.more-dropdown.hidden{display:none !important}
+.more-dropdown .menu-link{
+  width:100%;
+  justify-content:flex-start !important;
+  height:44px !important;
+  border-radius:12px !important;
+  background:#f8fbff !important;
+}
+.view{
+  margin-top:18px !important;
+}
+.layout{
+  grid-template-columns:minmax(760px,1.05fr) minmax(580px,.95fr) !important;
+}
+#productsTable tr.selected{
+  background:linear-gradient(90deg,#dbeafe 0%,#f5faff 100%) !important;
+  box-shadow:
+    inset 7px 0 0 #005eea,
+    inset -3px 0 0 #8cc3ff,
+    0 8px 24px rgba(0,94,234,.12) !important;
+  outline:2px solid rgba(0,94,234,.32);
+  outline-offset:-2px;
+}
+#productsTable tr.selected td{
+  border-top:1px solid rgba(0,94,234,.22) !important;
+  border-bottom:1px solid rgba(0,94,234,.22) !important;
+}
+#productsTable tr.selected td:first-child{
+  border-left:1px solid rgba(0,94,234,.38) !important;
+}
+#productsTable tr.selected td:last-child{
+  border-right:1px solid rgba(0,94,234,.38) !important;
+}
+.product-hero{
+  grid-template-columns:150px 1fr 140px !important;
+  align-items:center !important;
+  min-height:188px !important;
+  gap:20px !important;
+}
+.product-media{
+  width:150px;
+  height:150px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#f8fbff,#eef6ff);
+  border:1px solid #dbe8f7;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.product-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.product-placeholder{
+  display:grid;
+  place-items:center;
+  gap:8px;
+  color:#7a8aa4;
+}
+.product-placeholder span{
+  font-size:48px;
+  line-height:1;
+}
+.product-placeholder small{
+  font-weight:800;
+  font-size:12px;
+}
+.product-main-info h2{
+  font-size:28px !important;
+  margin-bottom:10px !important;
+}
+.product-code-line{
+  margin-top:12px;
+  color:#667892;
+  font-size:13px;
+}
+.product-code-line b{
+  color:#0b3973;
+}
+.qr-card{
+  width:140px !important;
+  justify-self:end;
+}
+.metric-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+.quick-actions{
+  grid-template-columns:1.55fr 1fr 1fr !important;
+}
+.quick-actions .primary-sell{
+  grid-column:1 / -1 !important;
+  order:-5 !important;
+}
+.quick-actions .danger{
+  margin-top:2px;
+}
+button[onclick*="editMinStock"],
+button[data-filter="low"],
+[onclick*="goProductFilter('low')"]{
+  display:none !important;
+}
+.task-grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+@media(max-width:1280px){
+  .layout{grid-template-columns:1fr !important}
+}
+@media(max-width:860px){
+  .brand-premium{justify-content:flex-start !important;text-align:left !important}
+  .header h1{font-size:34px !important}
+  .tm-mark{width:58px !important;height:52px !important;font-size:32px !important}
+  .control-panel .stats{grid-template-columns:1fr 1fr !important}
+  .main-tabs{overflow-x:auto !important}
+  .more-menu{margin-left:0 !important}
+  .product-hero{grid-template-columns:1fr !important}
+  .product-media{width:100%;height:180px}
+  .qr-card{justify-self:start}
+  .metric-grid{grid-template-columns:1fr 1fr !important}
+  .quick-actions{grid-template-columns:1fr !important}
+}
+@media(max-width:620px){
+  .control-panel .stats{grid-template-columns:1fr !important}
+}
+
 </style>
 </head>
 <body>
@@ -1176,7 +1384,6 @@ button{white-space:nowrap}
         <p>Склад, продажи, поступления, остатки и QR-этикетки 58×40</p>
       </div>
     </div>
-    <div class="actions"><button class="btn2" onclick="backup()">⬇️ Резерв</button><button class="btn2" onclick="restore()">♻️ Восстановить</button></div>
   </div>
 
   <div class="control-panel no-print">
@@ -1190,19 +1397,21 @@ button{white-space:nowrap}
   <div class="tabs main-tabs">
     <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
     <button id="tab-products" class="btn2 tab" onclick="view('products')">▣ Товары</button>
-    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">▤ Инвентаризация</button>
     <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">↓ Поступление</button>
-    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">▥ Журнал поступлений</button>
     <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
     <button id="tab-labels" class="btn2 tab" onclick="view('labels')">◇ Этикетки</button>
-    <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙ Настройки</button>
     <div class="more-menu">
       <button class="btn2 more-btn" type="button" onclick="toggleMoreMenu(event)">⋯ Ещё</button>
       <div id="moreMenu" class="more-dropdown hidden">
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('inventory')">▤ Инвентаризация</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('receipts')">▥ Журнал поступлений</button>
         <button class="btn2 menu-link" type="button" onclick="viewFromMenu('reports')">📊 Отчёты</button>
         <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Журнал действий</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('importexport')">💾 Резерв и восстановление</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('settings')">⚙ Настройки</button>
       </div>
     </div>
+  </div>
   </div>
   </div>
 
@@ -1543,16 +1752,17 @@ function prepareReceiptForProduct(id){
 function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
 function view(v){
   document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));
-  document.getElementById("view-"+v).classList.remove("hidden");
+  const pane=document.getElementById("view-"+v);
+  if(pane) pane.classList.remove("hidden");
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
   const tab=document.getElementById("tab-"+v);
   if(tab) tab.classList.add("active");
   const more=E("moreMenu");
   if(more) more.classList.add("hidden");
-  render()
+  render();
 }
 function toggleMoreMenu(e){
-  e.stopPropagation();
+  if(e) e.stopPropagation();
   const menu=E("moreMenu");
   if(menu) menu.classList.toggle("hidden");
 }
@@ -1563,9 +1773,8 @@ function viewFromMenu(v){
 }
 document.addEventListener("click",(e)=>{
   const menu=E("moreMenu");
-  if(!menu) return;
   const holder=document.querySelector(".more-menu");
-  if(holder && !holder.contains(e.target)) menu.classList.add("hidden");
+  if(menu && holder && !holder.contains(e.target)) menu.classList.add("hidden");
 });
 
 function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports();renderActivityLog()}
@@ -1791,6 +2000,78 @@ document.addEventListener("keydown",(e)=>{
   }
 });
 
+
+function categoryIcon(p){
+  const s=((p.category||"")+" "+(p.name||"")+" "+(p.model||"")).toLowerCase();
+  if(s.includes("телевиз")) return "📺";
+  if(s.includes("стирал")) return "🧺";
+  if(s.includes("холод")) return "🧊";
+  if(s.includes("мороз")) return "❄️";
+  if(s.includes("кондиц")) return "🌬️";
+  if(s.includes("плит")) return "🔥";
+  if(s.includes("микроволн")) return "◼️";
+  if(s.includes("пылес")) return "🧹";
+  return "📦";
+}
+
+function productVisual(p){
+  if(p.imageData){
+    return `<img src="${p.imageData}" alt="Фото товара">`;
+  }
+  return `<div class="product-placeholder"><span>${categoryIcon(p)}</span><small>Фото товара</small></div>`;
+}
+
+function attachProductPhoto(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+  const input=document.createElement("input");
+  input.type="file";
+  input.accept="image/*";
+  input.onchange=()=>{
+    const file=input.files?.[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=900;
+        const scale=Math.min(1,max/Math.max(img.width,img.height));
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.round(img.width*scale);
+        canvas.height=Math.round(img.height*scale);
+        const ctx=canvas.getContext("2d");
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        const previous=cloneData(p);
+        p.imageData=canvas.toDataURL("image/jpeg",0.82);
+        p.imageName=file.name;
+        logAction("product",`Добавлено фото товара: ${p.brand||""} ${p.model||""}`,{kind:"setProduct",product:previous});
+        save();
+        render();
+        toast("Фото товара сохранено");
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function removeProductPhoto(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p?.imageData){
+    toast("Фото товара не добавлено");
+    return;
+  }
+  if(!confirm("Удалить фото товара?")) return;
+  const previous=cloneData(p);
+  delete p.imageData;
+  delete p.imageName;
+  logAction("product",`Удалено фото товара: ${p.brand||""} ${p.model||""}`,{kind:"setProduct",product:previous});
+  save();
+  render();
+  toast("Фото товара удалено");
+}
+
 function renderDashboard(){
   if(!E("dashNoPrice")) return;
 
@@ -1937,15 +2218,19 @@ function renderDetails(){
 
   details.innerHTML=`
     <div class="product-hero">
-      <div>
+      <div class="product-media">
+        ${productVisual(p)}
+      </div>
+      <div class="product-main-info">
         <div class="muted">Карточка товара</div>
         <h2>${p.brand||""} ${p.model||""}</h2>
-        <div>${statusPill} ${!p.sellPrice?"<span class='pill warn'>Без цены</span>":""} ${(!p.archived && Number(p.minStock||0)>0 && st>0 && st<=Number(p.minStock||0))?"<span class='pill warn'>Мало остатка</span>":""}</div>
+        <div>${statusPill} ${!p.sellPrice?"<span class='pill warn'>Без цены</span>":""}</div>
         <p class="muted" style="margin-top:8px">${p.name||""}</p>
+        <div class="product-code-line">Код: <b>${p.code}</b></div>
       </div>
       <div class="qr-card">
         <div id="qrDet" class="qr" style="width:118px;height:118px"></div>
-        <div class="code-mini">${p.code}</div>
+        <div class="code-mini">QR 58×40</div>
       </div>
     </div>
 
@@ -1961,7 +2246,7 @@ function renderDetails(){
       <button class="btn2" onclick="prepareReceiptForProduct('${p.id}')">➕ Приход</button>
       <button class="btn primary-sell" onclick="prepareSale('${p.id}')">🛒 Продать</button>
       <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button>
-      <button class="btn2" onclick="prepareLabel('${p.id}')">🏷️ Этикетка</button>
+      <button class="btn2" onclick="prepareLabel('${p.id}')">🏷️ Этикетка</button><button class="btn2" onclick="attachProductPhoto('${p.id}')">🖼️ Фото</button>
       <button class="btn2" onclick="toggleArchiveProduct('${p.id}')">${p.archived?'↩️ Вернуть':'📦 В архив'}</button>
       <button class="danger" onclick="deleteProduct('${p.id}')">🗑️ Удалить ошибочный</button>
     </div>
