@@ -206,7 +206,7 @@ tbody tr:hover{
     <button id="tab-labels" class="btn2 tab" onclick="view('labels')">🏷️ Этикетки</button>
     <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙️ Настройки</button>
     <button id="tab-reports" class="btn2 tab" onclick="view('reports')">📊 Отчёты</button>
-    <button id="tab-importexport" class="btn2 tab" onclick="view('importexport')">↔️ Импорт/экспорт</button>
+    <button id="tab-importexport" class="btn2 tab" onclick="view('importexport')">💾 Резерв</button>
   </div>
 
   <section id="view-products" class="view no-print">
@@ -224,6 +224,7 @@ tbody tr:hover{
           <button class="btn2 product-filter" data-filter="stock" onclick="setProductFilter('stock')">В наличии</button>
           <button class="btn2 product-filter" data-filter="noPrice" onclick="setProductFilter('noPrice')">Без цены</button>
           <button class="btn2 product-filter" data-filter="zero" onclick="setProductFilter('zero')">Нулевой остаток</button>
+          <button class="btn2 product-filter" data-filter="low" onclick="setProductFilter('low')">Мало остатка</button>
           <button class="btn2 product-filter" data-filter="archive" onclick="setProductFilter('archive')">Архив</button>
         </div>
         <div class="category-filter-row">
@@ -358,7 +359,10 @@ tbody tr:hover{
           <div class="box"><span class="muted">Продажи сегодня</span><br><b id="repTodaySales">0 ₽</b></div>
           <div class="box"><span class="muted">Прибыль сегодня</span><br><b id="repTodayProfit">0 ₽</b></div>
           <div class="box"><span class="muted">Товаров без цены</span><br><b id="repNoPrice">0</b></div>
+          <div class="box"><span class="muted">Мало остатка</span><br><b id="repLowStock">0</b></div>
         </div>
+        <h3 style="margin-top:18px">Товары с малым остатком</h3>
+        <table><thead><tr><th>Товар</th><th>Остаток</th><th>Минимум</th><th></th></tr></thead><tbody id="lowStockTable"></tbody></table>
         <h3 style="margin-top:18px">Товары без продажной цены</h3>
         <table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th></th></tr></thead><tbody id="noPriceTable"></tbody></table>
       </div>
@@ -372,47 +376,35 @@ tbody tr:hover{
     </div>
   </section>
 
-
   <section id="view-importexport" class="view no-print hidden">
     <div class="layout">
       <div class="card">
-        <h2>Импорт из Excel / CSV</h2>
-        <p class="muted">Для переноса старой таблицы: сохрани Excel как CSV и загрузи сюда. Поддерживаются твои колонки: Код товара, Наименование, Цена, Остаток, Дата поступления, Закупочная цена. Серые строки-разделы вроде “Телевизоры” будут распознаны как категории.</p>
-        <div class="box">
-          <b>Колонки CSV:</b>
-          <p class="muted">Поддерживаемые колонки: Код товара / model, Наименование / name, Цена / sellPrice, Остаток / qty, Закупочная цена / buyPrice, Дата поступления.</p>
-          <p class="muted">Если в таблице есть строка-раздел “Телевизоры”, “Стиральные машины” и т.п., она станет категорией для товаров ниже. Позиции с остатком 0 тоже добавятся в каталог, но не будут считаться “в наличии”.</p>
-        </div>
+        <h2>Резервная копия</h2>
+        <p class="muted">Главный способ переноса и защиты данных. JSON сохраняет всю базу: товары, поступления, продажи, корректировки, категории, поставщиков и фото накладных.</p>
         <div class="actions">
-          <button class="btn2" onclick="downloadCsvTemplate()">⬇️ Скачать шаблон CSV</button>
-          <button class="btn" onclick="startCsvImport()">⬆️ Загрузить CSV</button>
+          <button class="btn" onclick="backup()">⬇️ Скачать резерв JSON</button>
+          <button class="btn2" onclick="restore()">♻️ Восстановить из JSON</button>
         </div>
-        <input id="csvImportInput" type="file" accept=".csv,text/csv" class="hidden" onchange="handleCsvImport(event)">
-        <h3 style="margin-top:18px">Предпросмотр импорта</h3><p class="muted">В предпросмотр попадут все товары из таблицы. Остаток пустой или 0 будет импортирован как 0, чтобы товар остался в каталоге.</p>
-        <div style="overflow:auto;max-height:420px">
-          <table>
-            <thead><tr><th>Товар</th><th>Кол-во</th><th>Закупка</th><th>Продажа</th></tr></thead>
-            <tbody id="csvPreviewTable"><tr><td colspan="4" class="muted">Файл пока не загружен.</td></tr></tbody>
-          </table>
-        </div>
-        <div class="actions">
-          <button class="green" onclick="confirmCsvImport()">✅ Импортировать как начальные остатки</button>
-          <button class="btn2" onclick="clearCsvPreview()">Сбросить</button>
+        <div class="box" style="margin-top:14px">
+          <b>Как пользоваться</b>
+          <p>1. Нажми <b>Скачать резерв JSON</b>.</p>
+          <p>2. Сохрани файл на флешку, компьютер или облачный диск.</p>
+          <p>3. Для переноса на другой компьютер открой программу и нажми <b>Восстановить из JSON</b>.</p>
         </div>
       </div>
       <div class="card">
-        <h2>Экспорт данных</h2>
-        <p class="muted">Можно выгрузить товары в CSV для Excel или сделать резервную копию всей базы.</p>
-        <div class="actions">
-          <button class="btn" onclick="exportProductsCsv()">⬇️ Экспорт товаров CSV</button>
-          <button class="btn2" onclick="exportSalesCsv()">⬇️ Экспорт продаж CSV</button>
-          <button class="btn2" onclick="backup()">⬇️ Полный резерв JSON</button>
-        </div>
-        <h3 style="margin-top:18px">Что выбрать?</h3>
+        <h2>Excel и старые таблицы</h2>
+        <p class="muted">Импорт Excel/CSV убран, чтобы не путаться с форматами и кодировками.</p>
         <div class="box">
-          <p><b>CSV</b> — удобно открыть в Excel и посмотреть таблицей.</p>
-          <p><b>JSON резерв</b> — нужен для полного восстановления программы.</p>
+          <p>Если нужно перенести старую Excel-таблицу, лучше прислать файл сюда. Я подготовлю готовый JSON-файл восстановления под структуру твоей таблицы.</p>
+          <p>Так меньше риска, что программа неправильно распознает категории, остатки или цены.</p>
         </div>
+        <h3 style="margin-top:18px">Дополнительно</h3>
+        <div class="actions">
+          <button class="btn2" onclick="exportProductsCsv()">⬇️ Экспорт товаров CSV</button>
+          <button class="btn2" onclick="exportSalesCsv()">⬇️ Экспорт продаж CSV</button>
+        </div>
+        <p class="muted">CSV-экспорт оставлен только для просмотра данных в Excel. Для восстановления используй JSON.</p>
       </div>
     </div>
   </section>
@@ -494,6 +486,7 @@ function productMatchesFilter(p){
   if(productFilter==="stock") return !p.archived && st>0;
   if(productFilter==="noPrice") return !p.archived && !Number(p.sellPrice||0);
   if(productFilter==="zero") return !p.archived && st<=0;
+  if(productFilter==="low") return !p.archived && st>0 && Number(p.minStock||0)>0 && st<=Number(p.minStock||0);
   if(productFilter==="archive") return !!p.archived;
   return !p.archived;
 }
@@ -509,8 +502,8 @@ function renderProducts(){
   productsTable.innerHTML=arr.map(p=>{
     const st=stock(p);
     return `<tr class="${p.id===selectedProductId?'selected':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
-      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span><br>${p.name||""}${!p.sellPrice?'<br><span class="pill warn">без цены</span>':''}${p.archived?'<br><span class="pill warn">архив</span>':''}</td>
-      <td><b>${st}</b> шт</td>
+      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span><br>${p.name||""}${!p.sellPrice?'<br><span class="pill warn">без цены</span>':''}${(!p.archived && Number(p.minStock||0)>0 && st>0 && st<=Number(p.minStock||0))?'<br><span class="pill warn">мало остатка</span>':''}${p.archived?'<br><span class="pill warn">архив</span>':''}</td>
+      <td><b>${st}</b> шт<br><span class="muted">мин: ${Number(p.minStock||0)||"—"}</span></td>
       <td>посл. ${rub(lastBuy(p))}<br><span class="muted">сред. ${rub(avgBuy(p))}</span><br><span class="muted">${lastReceiptInfo(p)}</span></td>
       <td>${p.sellPrice?rub(p.sellPrice):"<span class='pill warn'>не указана</span>"}</td>
       <td>${p.archived?"<span class='pill warn'>Архив</span>":st>0?"<span class='pill ok'>В наличии</span>":"<span class='pill bad'>Нет</span>"}</td>
@@ -546,7 +539,7 @@ function renderDetails(){
       <div>
         <div class="muted">Карточка товара</div>
         <h2>${p.brand||""} ${p.model||""}</h2>
-        <div>${statusPill} ${!p.sellPrice?"<span class='pill warn'>Без цены</span>":""}</div>
+        <div>${statusPill} ${!p.sellPrice?"<span class='pill warn'>Без цены</span>":""} ${(!p.archived && Number(p.minStock||0)>0 && st>0 && st<=Number(p.minStock||0))?"<span class='pill warn'>Мало остатка</span>":""}</div>
         <p class="muted" style="margin-top:8px">${p.name||""}</p>
       </div>
       <div class="qr-card">
@@ -560,13 +553,14 @@ function renderDetails(){
       <div class="metric"><span>Продажная цена</span><b>${pricePill}</b></div>
       <div class="metric"><span>Последняя закупка</span><b>${rub(lastBuy(p))}</b></div>
       <div class="metric"><span>Средняя закупка</span><b>${rub(avgBuy(p))}</b></div>
+      <div class="metric"><span>Мин. остаток</span><b>${Number(p.minStock||0)||"—"}</b></div>
     </div>
 
     <div class="quick-actions">
       <button class="btn2" onclick="editProduct('${p.id}')">✏️ Редактировать</button>
       <button class="btn2" onclick="prepareReceiptForProduct('${p.id}')">➕ Приход</button>
       <button class="btn" onclick="prepareSale('${p.id}')">🛒 Продать</button>
-      <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button>
+      <button class="btn2" onclick="editPrice('${p.id}')">💰 Цена</button><button class="btn2" onclick="editMinStock('${p.id}')">📉 Мин. остаток</button>
       <button class="btn2" onclick="prepareLabel('${p.id}')">🏷️ Этикетка</button>
       <button class="btn2" onclick="toggleArchiveProduct('${p.id}')">${p.archived?'↩️ Вернуть':'📦 В архив'}</button>
       <button class="danger" onclick="deleteProduct('${p.id}')">🗑️ Удалить ошибочный</button>
@@ -604,6 +598,8 @@ function editProduct(id){
   if(name===null) return;
   const sell=prompt("Продажная цена:", p.sellPrice||"") ?? null;
   if(sell===null) return;
+  const minStock=prompt("Минимальный остаток для уведомления:", p.minStock||"") ?? null;
+  if(minStock===null) return;
 
   const oldCode=p.code;
   p.category=category.trim()||"Прочее";
@@ -611,6 +607,7 @@ function editProduct(id){
   p.model=model.trim();
   p.name=name.trim();
   p.sellPrice=Number(sell||0);
+  p.minStock=Number(minStock||0);
 
   const newCode=code(p.brand,p.model);
   // Если новый код не занят другим товаром, обновляем QR-код.
@@ -629,6 +626,17 @@ function editProduct(id){
 }
 
 function editPrice(id){let p=state.products.find(x=>x.id===id),v=prompt("Новая продажная цена:",p.sellPrice||"");if(v===null)return;p.sellPrice=Number(v||0);save();render();toast("Цена обновлена")}
+function editMinStock(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+  const value=prompt("Минимальный остаток для уведомления:", p.minStock||"");
+  if(value===null) return;
+  p.minStock=Number(value||0);
+  save();
+  render();
+  toast("Минимальный остаток обновлён");
+}
+
 function prepareSale(id){let p=state.products.find(x=>x.id===id);saleId=id;E("saleSearch").value="";E("salePrice").value=p.sellPrice||"";view("sales")} function prepareLabel(id){labelId=id; E("labelSearch").value=""; view("labels")}
 function renderSelects(){
   const visibleSuppliers = state.suppliers.filter(s => s !== "Начальные остатки");
@@ -760,12 +768,14 @@ function findOrCreate(l){
       brand:l.brand,
       model:l.model,
       name:l.name||[l.brand,l.model].filter(Boolean).join(" "),
-      sellPrice:Number(l.sellPrice||0)
+      sellPrice:Number(l.sellPrice||0),
+      minStock:Number(l.minStock||0)
     };
     state.products.unshift(p);
   }else{
     if(l.brand && !p.brand) p.brand=l.brand;
     if(l.sellPrice) p.sellPrice=Number(l.sellPrice);
+    if(l.minStock) p.minStock=Number(l.minStock);
     if(l.name) p.name=l.name;
     if(l.category) p.category=l.category;
   }
@@ -1310,10 +1320,21 @@ function renderReports(){
   const todayRevenue=todaySales.reduce((sum,s)=>sum+Number(s.price||0)*Number(s.qty||0),0);
   const todayProfit=todaySales.reduce((sum,s)=>sum+(Number(s.price||0)*Number(s.qty||0)-saleCost(s)),0);
   const noPrice=state.products.filter(p=>!p.archived && stock(p)>0 && !Number(p.sellPrice||0));
+  const lowStock=state.products.filter(p=>!p.archived && stock(p)>0 && Number(p.minStock||0)>0 && stock(p)<=Number(p.minStock||0));
 
   E("repTodaySales").textContent=rub(todayRevenue);
   E("repTodayProfit").textContent=rub(todayProfit);
   E("repNoPrice").textContent=noPrice.length;
+  if(E("repLowStock")) E("repLowStock").textContent=lowStock.length;
+
+  if(E("lowStockTable")) E("lowStockTable").innerHTML=lowStock.map(p=>`
+    <tr onclick="selectedProductId='${p.id}';view('products')">
+      <td><b>${p.brand||""} ${p.model}</b><br><span class="muted">${p.code}</span></td>
+      <td>${stock(p)} шт</td>
+      <td>${Number(p.minStock||0)}</td>
+      <td><button class="btn2" onclick="event.stopPropagation();prepareReceiptForProduct('${p.id}')">Приход</button></td>
+    </tr>
+  `).join("") || `<tr><td class="muted" colspan="4">Товаров с малым остатком нет.</td></tr>`;
 
   E("noPriceTable").innerHTML=noPrice.map(p=>`
     <tr onclick="selectedProductId='${p.id}';view('products')">
@@ -1590,7 +1611,8 @@ function confirmCsvImport(){
       name:row.name||"",
       qty:row.qty,
       buyPrice:row.buyPrice,
-      sellPrice:row.sellPrice
+      sellPrice:row.sellPrice,
+      minStock:row.minStock||0
     };
     if(line.category && !state.categories.includes(line.category)) state.categories.push(line.category);
     const p=findOrCreate(line);
