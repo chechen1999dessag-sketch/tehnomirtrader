@@ -151,6 +151,24 @@ tbody tr:hover{
   grid-template-columns:1fr 160px;
 }
 
+
+.file-box{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border:1px dashed #b9cbe0;
+  border-radius:16px;
+  background:#f8fbfe;
+}
+.file-box input{
+  background:#fff;
+}
+@media(max-width:720px){
+  .file-box{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -233,6 +251,14 @@ tbody tr:hover{
         <select id="supplier"></select>
         <input id="supplierNew" placeholder="Новый поставщик">
         <textarea id="comment" placeholder="Примечание к поступлению, необязательно" style="grid-column:1/-1"></textarea>
+        <div class="file-box" style="grid-column:1/-1">
+          <div>
+            <b>Фото накладной</b>
+            <div class="muted">Необязательно. Для прототипа фото хранится в браузере и попадёт в резервную копию.</div>
+          </div>
+          <input id="invoicePhoto" type="file" accept="image/*" onchange="handleInvoicePhoto(event)">
+          <div id="invoicePhotoStatus" class="muted"></div>
+        </div>
       </div>
       <h3 style="margin-top:18px">Добавить товар в приёмку</h3>
       <div class="grid2">
@@ -294,7 +320,7 @@ tbody tr:hover{
         <div class="search"><input id="receiptSearch" placeholder="Поиск по номеру, поставщику или товару" oninput="renderReceiptsJournal()"><button class="btn2" onclick="E('receiptSearch').value='';renderReceiptsJournal()">Сброс</button></div>
         <div style="overflow:auto">
           <table>
-            <thead><tr><th>Поступление</th><th>Поставщик</th><th>Товары</th><th>Сумма</th></tr></thead>
+            <thead><tr><th>Поступление</th><th>Поставщик</th><th>Товары</th><th>Сумма</th><th>Фото</th></tr></thead>
             <tbody id="receiptsJournalTable"></tbody>
           </table>
         </div>
@@ -334,14 +360,14 @@ tbody tr:hover{
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
 function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[]}}
-let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all";
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", pendingInvoicePhoto=null;
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
 function rub(v){return Math.round(Number(v||0)).toLocaleString("ru-RU")+" ₽"} function today(){return new Date().toISOString().slice(0,10)} function fd(v){return v?new Date(v+"T00:00").toLocaleDateString("ru-RU"):"—"}
 function uid(p){return p+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7)} function slug(v){return String(v||"").toUpperCase().replace(/[^A-ZА-ЯЁ0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60)} function code(b,m){return"TM-MODEL-"+slug([b,m].filter(Boolean).join("-"))}
 function stock(p){let inn=state.receipts.flatMap(r=>r.lines).filter(l=>l.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let out=state.sales.filter(s=>s.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let adj=(state.adjustments||[]).filter(a=>a.productId===p.id).reduce((s,a)=>s+Number(a.diff||0),0);return inn-out+adj}
-function receiptLines(p){return state.receipts.flatMap(r=>r.lines.map(l=>({...l,date:r.date,supplier:r.supplier,invoice:r.number}))).filter(l=>l.productId===p.id)}
+function receiptLines(p){return state.receipts.flatMap(r=>r.lines.map(l=>({...l,date:r.date,supplier:r.supplier,invoice:r.number,receiptId:r.id,photoData:r.photoData,photoName:r.photoName}))).filter(l=>l.productId===p.id)}
 function lastBuy(p){let a=receiptLines(p);return a.length?Number(a[a.length-1].buyPrice||0):0} function avgBuy(p){let a=receiptLines(p),q=a.reduce((s,l)=>s+Number(l.qty||0),0),sum=a.reduce((s,l)=>s+Number(l.qty||0)*Number(l.buyPrice||0),0);return q?sum/q:lastBuy(p)}
 
 function lastReceiptInfo(p){
@@ -467,7 +493,7 @@ function renderDetails(){
 
     <div class="history-section">
       <h3>История поступлений</h3>
-      ${ins.length?`<table><thead><tr><th>Дата</th><th>Поставщик</th><th>Накладная</th><th>Кол-во</th><th>Закупка</th></tr></thead><tbody>${ins.map(l=>`<tr><td>${fd(l.date)}</td><td>${l.supplier}</td><td>${l.invoice||"—"}</td><td>${l.qty}</td><td>${rub(l.buyPrice)}</td></tr>`).join("")}</tbody></table>`:"<p class='muted'>Поступлений нет.</p>"}
+      ${ins.length?`<table><thead><tr><th>Дата</th><th>Поставщик</th><th>Накладная</th><th>Кол-во</th><th>Закупка</th><th>Фото</th></tr></thead><tbody>${ins.map(l=>`<tr><td>${fd(l.date)}</td><td>${l.supplier}</td><td>${l.invoice||"—"}</td><td>${l.qty}</td><td>${rub(l.buyPrice)}</td><td>${l.photoData?`<button class="btn2" onclick="openReceiptPhoto(\'${l.receiptId}\')">Открыть</button>`:"—"}</td></tr>`).join("")}</tbody></table>`:"<p class='muted'>Поступлений нет.</p>"}
     </div>
 
     <div class="history-section">
@@ -527,6 +553,60 @@ function renderSelects(){
   const visibleSuppliers = state.suppliers.filter(s => s !== "Начальные остатки");
   supplier.innerHTML='<option value="">Выбрать поставщика</option>'+visibleSuppliers.map(s=>`<option>${s}</option>`).join("");
   category.innerHTML='<option value="">Категория</option>'+state.categories.map(c=>`<option>${c}</option>`).join("");
+}
+
+
+function handleInvoicePhoto(event){
+  const file=event.target.files?.[0];
+  if(!file){
+    pendingInvoicePhoto=null;
+    E("invoicePhotoStatus").textContent="";
+    return;
+  }
+
+  if(!file.type.startsWith("image/")){
+    toast("Выбери изображение накладной");
+    event.target.value="";
+    return;
+  }
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    const img=new Image();
+    img.onload=()=>{
+      const maxW=1400;
+      const scale=Math.min(1, maxW/img.width);
+      const canvas=document.createElement("canvas");
+      canvas.width=Math.round(img.width*scale);
+      canvas.height=Math.round(img.height*scale);
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      const dataUrl=canvas.toDataURL("image/jpeg",0.78);
+      pendingInvoicePhoto={name:file.name,dataUrl};
+      E("invoicePhotoStatus").textContent=`Фото прикреплено: ${file.name}`;
+      toast("Фото накладной прикреплено");
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openReceiptPhoto(receiptId){
+  const r=state.receipts.find(x=>x.id===receiptId);
+  if(!r?.photoData){
+    toast("Фото накладной не прикреплено");
+    return;
+  }
+  const w=window.open("");
+  if(!w){
+    toast("Браузер заблокировал открытие окна");
+    return;
+  }
+  w.document.write(`
+    <html><head><title>${r.number||"Накладная"}</title>
+    <style>body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh}img{max-width:96vw;max-height:96vh}</style>
+    </head><body><img src="${r.photoData}" alt="Накладная"></body></html>
+  `);
 }
 
 function currentLineIsFilled(){
@@ -632,6 +712,8 @@ function saveReceipt(){
     date,
     supplier:sup,
     comment:E("comment").value.trim(),
+    photoData:pendingInvoicePhoto?.dataUrl||"",
+    photoName:pendingInvoicePhoto?.name||"",
     lines:[]
   };
 
@@ -644,6 +726,9 @@ function saveReceipt(){
   state.receipts.unshift(r);
   lines=[];
   ["invNo","supplierNew","comment"].forEach(id=>E(id).value="");
+  E("invoicePhoto").value="";
+  E("invoicePhotoStatus").textContent="";
+  pendingInvoicePhoto=null;
   save();
   render();
   toast(`Поступление сохранено. Обновлено моделей: ${r.lines.length}`);
@@ -677,6 +762,9 @@ function saveInitialStock(){
 
   state.receipts.unshift(r);
   lines=[];
+  if(E("invoicePhoto")) E("invoicePhoto").value="";
+  if(E("invoicePhotoStatus")) E("invoicePhotoStatus").textContent="";
+  pendingInvoicePhoto=null;
   save();
   render();
   toast(`Начальные остатки сохранены. Обновлено моделей: ${r.lines.length}`);
@@ -1004,9 +1092,9 @@ function renderReceiptsJournal(){
       <td><b>${r.number||"Без номера"}</b><br><span class="muted">${fd(r.date)}</span></td>
       <td>${r.supplier||"—"}</td>
       <td>${receiptProductsText(r)||"—"}</td>
-      <td><b>${rub(receiptTotal(r))}</b></td>
+      <td><b>${rub(receiptTotal(r))}</b></td><td>${r.photoData?"📷":"—"}</td>
     </tr>
-  `).join("") || `<tr><td colspan="4" class="muted">Поступлений пока нет.</td></tr>`;
+  `).join("") || `<tr><td colspan="5" class="muted">Поступлений пока нет.</td></tr>`;
 
   renderReceiptDetails();
 }
@@ -1027,6 +1115,7 @@ function renderReceiptDetails(){
       <b>${r.number||"Без номера"}</b><br>
       <span class="muted">${fd(r.date)} · ${r.supplier||"—"}</span><br>
       ${r.comment?`<p>${r.comment}</p>`:""}
+      ${r.photoData?`<div style="margin-top:10px"><button class="btn2" onclick="openReceiptPhoto(\'${r.id}\')">📷 Открыть фото накладной</button></div>`:"<p class='muted'>Фото накладной не прикреплено.</p>"}
     </div>
     <div class="actions">
       <button class="btn2" onclick="editReceiptHeader('${r.id}')">✏️ Изменить шапку</button>
@@ -1066,6 +1155,11 @@ function editReceiptHeader(id){
   r.date=date.trim()||today();
   r.supplier=supplierName.trim()||"—";
   r.comment=commentText.trim();
+
+  if(r.photoData && confirm("Удалить прикреплённое фото накладной? Нажми OK, чтобы удалить, или Отмена, чтобы оставить.")){
+    r.photoData="";
+    r.photoName="";
+  }
 
   if(r.supplier && r.supplier!=="Начальные остатки" && !state.suppliers.includes(r.supplier)) state.suppliers.push(r.supplier);
 
