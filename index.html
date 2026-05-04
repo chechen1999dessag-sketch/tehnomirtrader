@@ -146,6 +146,11 @@ tbody tr:hover{
   .metric-grid{grid-template-columns:1fr}
 }
 
+
+#inventoryDetails .product-hero{
+  grid-template-columns:1fr 160px;
+}
+
 </style>
 </head>
 <body>
@@ -165,6 +170,7 @@ tbody tr:hover{
 
   <div class="tabs no-print">
     <button id="tab-products" class="btn2 tab active" onclick="view('products')">📋 Товары</button>
+    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">🧮 Инвентаризация</button>
     <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">➕ Поступление</button>
     <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">📥 Журнал поступлений</button>
     <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
@@ -193,6 +199,28 @@ tbody tr:hover{
         <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th>Продажа</th><th>Статус</th></tr></thead><tbody id="productsTable"></tbody></table></div>
       </div>
       <div class="card" id="details"><h2>Карточка товара</h2><p class="muted">Выбери товар или добавь поступление.</p></div>
+    </div>
+  </section>
+
+
+  <section id="view-inventory" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>Инвентаризация</h2>
+        <p class="muted">Используй, когда фактическое количество в магазине отличается от программы. История не ломается: программа создаёт корректировку.</p>
+        <div class="search">
+          <input id="inventorySearch" placeholder="Поиск или сканер QR" oninput="renderInventory()">
+          <button class="btn2" onclick="E('inventorySearch').value='';inventoryId=null;renderInventory()">Сброс</button>
+        </div>
+        <table>
+          <thead><tr><th>Товар</th><th>По программе</th><th>Статус</th></tr></thead>
+          <tbody id="inventoryTable"></tbody>
+        </table>
+      </div>
+      <div class="card" id="inventoryDetails">
+        <h2>Корректировка остатка</h2>
+        <p class="muted">Выбери товар из списка.</p>
+      </div>
     </div>
   </section>
 
@@ -305,14 +333,14 @@ tbody tr:hover{
 <script>
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
-function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[]}}
-let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, lines=[], productFilter="all";
+function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[]}}
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all";
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
 function rub(v){return Math.round(Number(v||0)).toLocaleString("ru-RU")+" ₽"} function today(){return new Date().toISOString().slice(0,10)} function fd(v){return v?new Date(v+"T00:00").toLocaleDateString("ru-RU"):"—"}
 function uid(p){return p+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,7)} function slug(v){return String(v||"").toUpperCase().replace(/[^A-ZА-ЯЁ0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60)} function code(b,m){return"TM-MODEL-"+slug([b,m].filter(Boolean).join("-"))}
-function stock(p){let inn=state.receipts.flatMap(r=>r.lines).filter(l=>l.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let out=state.sales.filter(s=>s.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);return inn-out}
+function stock(p){let inn=state.receipts.flatMap(r=>r.lines).filter(l=>l.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let out=state.sales.filter(s=>s.productId===p.id).reduce((s,l)=>s+Number(l.qty||0),0);let adj=(state.adjustments||[]).filter(a=>a.productId===p.id).reduce((s,a)=>s+Number(a.diff||0),0);return inn-out+adj}
 function receiptLines(p){return state.receipts.flatMap(r=>r.lines.map(l=>({...l,date:r.date,supplier:r.supplier,invoice:r.number}))).filter(l=>l.productId===p.id)}
 function lastBuy(p){let a=receiptLines(p);return a.length?Number(a[a.length-1].buyPrice||0):0} function avgBuy(p){let a=receiptLines(p),q=a.reduce((s,l)=>s+Number(l.qty||0),0),sum=a.reduce((s,l)=>s+Number(l.qty||0)*Number(l.buyPrice||0),0);return q?sum/q:lastBuy(p)}
 
@@ -342,7 +370,7 @@ function prepareReceiptForProduct(id){
 
 function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
 function view(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById("view-"+v).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+v).classList.add("active");render()}
-function render(){renderSelects();renderStats();renderProducts();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
+function render(){renderSelects();renderStats();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
 function renderStats(){
   const active=state.products.filter(p=>!p.archived);
   stStock.textContent=active.reduce((s,p)=>s+Math.max(0,stock(p)),0);
@@ -445,6 +473,11 @@ function renderDetails(){
     <div class="history-section">
       <h3>История продаж</h3>
       ${sales.length?`<table><thead><tr><th>Дата</th><th>Кол-во</th><th>Цена</th><th>Метод</th></tr></thead><tbody>${sales.map(s=>`<tr><td>${fd(s.date)}</td><td>${s.qty}</td><td>${rub(s.price)}</td><td>${s.method}</td></tr>`).join("")}</tbody></table>`:"<p class='muted'>Продаж нет.</p>"}
+    </div>
+
+    <div class="history-section">
+      <h3>Корректировки</h3>
+      ${renderProductAdjustments(p)}
     </div>
   `;
   makeQR("qrDet",p.code,110);
@@ -783,6 +816,114 @@ function labelHtml(p){return`<div class="print-label"><div><div class="brand">Т
 function printSelected(){let p=state.products.find(x=>x.id===labelId);if(!p){toast("Выбери товар");return}let count=labelMode.value==="stock"?Math.max(1,stock(p)):1;printLabels(Array(count).fill(p))}
 function printAll(){let a=[];state.products.forEach(p=>{for(let i=0;i<Math.max(0,stock(p));i++)a.push(p)});if(!a.length){toast("Нет остатков");return}printLabels(a)}
 function printLabels(a){printArea.innerHTML=`<div class="label-sheet">${a.map(labelHtml).join("")}</div>`;printArea.querySelectorAll(".qrbox").forEach((b,i)=>renderQRInto(b,a[i].code,64));setTimeout(()=>print(),200)}
+
+function productAdjustments(p){
+  return (state.adjustments||[]).filter(a=>a.productId===p.id);
+}
+
+function renderProductAdjustments(p){
+  const arr=productAdjustments(p);
+  if(!arr.length) return "<p class='muted'>Корректировок нет.</p>";
+  return `<table><thead><tr><th>Дата</th><th>Разница</th><th>Комментарий</th></tr></thead><tbody>${arr.map(a=>`
+    <tr><td>${fd(a.date)}</td><td><b>${Number(a.diff)>0?"+":""}${a.diff} шт</b></td><td>${a.comment||"—"}</td></tr>
+  `).join("")}</tbody></table>`;
+}
+
+function renderInventory(){
+  const table=E("inventoryTable");
+  if(!table) return;
+
+  const q=(E("inventorySearch")?.value||"").toLowerCase().trim();
+  const exact=productByCode(q);
+  if(exact) inventoryId=exact.id;
+
+  const arr=state.products
+    .filter(p=>!p.archived)
+    .filter(p=>!q || [p.code,p.brand,p.model,p.name,p.category].join(" ").toLowerCase().includes(q))
+    .slice(0,80);
+
+  if(!inventoryId && arr.length) inventoryId=arr[0].id;
+
+  table.innerHTML=arr.map(p=>`
+    <tr class="${p.id===inventoryId?'selected':''}" onclick="selectInventoryProduct('${p.id}')">
+      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span></td>
+      <td><b>${stock(p)}</b> шт</td>
+      <td>${stock(p)>0?"<span class='pill ok'>В наличии</span>":"<span class='pill bad'>Нет</span>"}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="3" class="muted">Товары не найдены.</td></tr>`;
+
+  renderInventoryDetails();
+}
+
+function selectInventoryProduct(id){
+  inventoryId=id;
+  renderInventory();
+}
+
+function renderInventoryDetails(){
+  const box=E("inventoryDetails");
+  if(!box) return;
+  const p=state.products.find(x=>x.id===inventoryId);
+  if(!p){
+    box.innerHTML=`<h2>Корректировка остатка</h2><p class="muted">Выбери товар из списка.</p>`;
+    return;
+  }
+
+  const st=stock(p);
+  box.innerHTML=`
+    <h2>Корректировка остатка</h2>
+    <div class="product-hero">
+      <div>
+        <div class="muted">Выбранный товар</div>
+        <h2>${p.brand||""} ${p.model||""}</h2>
+        <p class="muted">${p.name||""}</p>
+      </div>
+      <div class="metric"><span>По программе</span><b>${st} шт</b></div>
+    </div>
+
+    <div class="grid2">
+      <input id="actualStock" type="number" min="0" value="${Math.max(0,st)}" placeholder="Фактически в магазине">
+      <input id="inventoryComment" placeholder="Комментарий, например пересчёт склада">
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="applyInventoryAdjustment('${p.id}')">✅ Применить корректировку</button>
+      <button class="btn2" onclick="selectedProductId='${p.id}';view('products')">Открыть карточку</button>
+    </div>
+
+    <h3 style="margin-top:18px">История корректировок</h3>
+    ${renderProductAdjustments(p)}
+  `;
+}
+
+function applyInventoryAdjustment(id){
+  const p=state.products.find(x=>x.id===id);
+  if(!p) return;
+  const current=stock(p);
+  const actual=Number(E("actualStock").value||0);
+  const diff=actual-current;
+
+  if(diff===0){
+    toast("Остаток совпадает, корректировка не нужна");
+    return;
+  }
+
+  if(!confirm(`По программе: ${current} шт. Фактически: ${actual} шт. Создать корректировку ${diff>0?"+":""}${diff} шт?`)) return;
+
+  if(!state.adjustments) state.adjustments=[];
+  state.adjustments.unshift({
+    id:uid("adj"),
+    productId:id,
+    date:today(),
+    diff,
+    comment:E("inventoryComment").value.trim() || "Инвентаризация"
+  });
+
+  save();
+  render();
+  toast("Остаток скорректирован");
+}
+
 function renderSettings(){
   cats.innerHTML=state.categories.map(c=>`
     <span class="pill ok removable" style="margin:4px">
