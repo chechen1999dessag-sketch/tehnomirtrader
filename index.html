@@ -180,6 +180,57 @@ tbody tr:hover{
   .category-filter-row{grid-template-columns:1fr}
 }
 
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:14px;
+}
+.task-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+.task-card{
+  display:grid;
+  align-items:start;
+  justify-items:start;
+  gap:6px;
+  padding:16px;
+  min-height:118px;
+  border-radius:20px;
+  border:1px solid #dbe6f2;
+  background:linear-gradient(135deg,#f8fbff,#eef6ff);
+  color:#172033;
+  text-align:left;
+}
+.task-card span{font-size:22px}
+.task-card b{font-size:28px}
+.task-card small{color:#64748b;font-weight:800}
+.dashboard-metrics{
+  grid-template-columns:repeat(2,1fr);
+}
+.receipt-total{
+  margin:8px 0 10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#eef6ff;
+  border:1px solid #d8e7f7;
+  color:#1d385a;
+}
+.category-filter-row{
+  grid-template-columns:1fr 1fr auto;
+}
+@media(max-width:1000px){
+  .dashboard-grid{grid-template-columns:1fr}
+  .task-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:720px){
+  .task-grid{grid-template-columns:1fr}
+  .category-filter-row{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -198,7 +249,8 @@ tbody tr:hover{
   </div>
 
   <div class="tabs no-print">
-    <button id="tab-products" class="btn2 tab active" onclick="view('products')">📋 Товары</button>
+    <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
+    <button id="tab-products" class="btn2 tab" onclick="view('products')">📋 Товары</button>
     <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">🧮 Инвентаризация</button>
     <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">➕ Поступление</button>
     <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">📥 Журнал поступлений</button>
@@ -209,7 +261,65 @@ tbody tr:hover{
     <button id="tab-importexport" class="btn2 tab" onclick="view('importexport')">💾 Резерв</button>
   </div>
 
-  <section id="view-products" class="view no-print">
+
+  <section id="view-dashboard" class="view no-print">
+    <div class="dashboard-grid">
+      <div class="card">
+        <h2>Быстрые задачи</h2>
+        <p class="muted">Главные места, куда стоит смотреть каждый день.</p>
+        <div class="task-grid">
+          <button class="task-card" onclick="goProductFilter('noPrice')">
+            <span>🏷️</span>
+            <b id="dashNoPrice">0</b>
+            <small>Товаров без цены</small>
+          </button>
+          <button class="task-card" onclick="goProductFilter('low')">
+            <span>📉</span>
+            <b id="dashLowStock">0</b>
+            <small>Мало остатка</small>
+          </button>
+          <button class="task-card" onclick="goProductFilter('zero')">
+            <span>⭕</span>
+            <b id="dashZeroStock">0</b>
+            <small>Нулевой остаток</small>
+          </button>
+          <button class="task-card" onclick="view('receipts')">
+            <span>📥</span>
+            <b id="dashReceipts">0</b>
+            <small>Поступлений</small>
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Сегодня</h2>
+        <div class="metric-grid dashboard-metrics">
+          <div class="metric"><span>Продаж</span><b id="dashSalesToday">0</b></div>
+          <div class="metric"><span>Выручка</span><b id="dashRevenueToday">0 ₽</b></div>
+          <div class="metric"><span>Прибыль</span><b id="dashProfitToday">0 ₽</b></div>
+          <div class="metric"><span>В наличии</span><b id="dashStockUnits">0 шт</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout" style="margin-top:14px">
+      <div class="card">
+        <h2>Последние продажи</h2>
+        <table>
+          <thead><tr><th>Дата</th><th>Товар</th><th>Кол-во</th><th>Цена</th></tr></thead>
+          <tbody id="dashLastSales"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Последние поступления</h2>
+        <table>
+          <thead><tr><th>Дата</th><th>Поставщик</th><th>Товары</th><th>Сумма</th></tr></thead>
+          <tbody id="dashLastReceipts"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-products" class="view no-print hidden">
     <div class="layout">
       <div class="card">
         <div class="scan-box">
@@ -230,6 +340,13 @@ tbody tr:hover{
         <div class="category-filter-row">
           <select id="productCategoryFilter" onchange="setCategoryFilter(this.value)">
             <option value="">Все категории</option>
+          </select>
+          <select id="productSort" onchange="setProductSort(this.value)">
+            <option value="name">Сортировка: по названию</option>
+            <option value="stockDesc">Остаток: больше → меньше</option>
+            <option value="stockAsc">Остаток: меньше → больше</option>
+            <option value="sellDesc">Цена продажи: больше → меньше</option>
+            <option value="buyDesc">Закупка: больше → меньше</option>
           </select>
           <button class="btn2" onclick="setCategoryFilter('')">Сбросить категорию</button>
         </div>
@@ -286,8 +403,8 @@ tbody tr:hover{
         <input id="name" placeholder="Название/описание"><input id="qty" type="number" min="1" value="1" placeholder="Количество">
         <input id="buy" type="number" min="0" placeholder="Закупочная цена"><input id="sell" type="number" min="0" placeholder="Продажная цена, можно позже">
       </div>
-      <div class="actions"><button class="btn" onclick="addLine()">➕ Добавить товар в список</button><button class="green" onclick="saveReceipt()">✅ Провести поступление</button><button class="btn2" onclick="saveInitialStock()">📦 Внести остаток</button></div>
-      <h3 style="margin-top:18px">Товары, подготовленные к сохранению</h3><p class="muted">Можно добавить несколько моделей, а потом сохранить всё одной накладной. Если модель уже существует — увеличится её остаток.</p>
+      <div class="actions"><button class="btn" onclick="addLine()">➕ Добавить товар в список</button><button class="btn2" onclick="clearReceiptProductForm()">Очистить товар</button><button class="green" onclick="saveReceipt()">✅ Провести поступление</button><button class="btn2" onclick="saveInitialStock()">📦 Внести остаток</button></div>
+      <h3 style="margin-top:18px">Товары, подготовленные к сохранению</h3><div class="receipt-total">Итого по приёмке: <b id="receiptDraftTotal">0 ₽</b></div><p class="muted">Можно добавить несколько моделей, а потом сохранить всё одной накладной. Если модель уже существует — увеличится её остаток.</p>
       <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Кол-во</th><th>Закупка</th><th>Сумма</th><th></th></tr></thead><tbody id="linesTable"></tbody></table></div>
     </div>
   </section>
@@ -415,7 +532,7 @@ tbody tr:hover{
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
 function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[]}}
-let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", pendingInvoicePhoto=null, pendingCsvRows=[];
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", productSort="name", pendingInvoicePhoto=null, pendingCsvRows=[];
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
@@ -451,7 +568,49 @@ function prepareReceiptForProduct(id){
 
 function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
 function view(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById("view-"+v).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+v).classList.add("active");render()}
-function render(){renderSelects();renderStats();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
+function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
+
+function renderDashboard(){
+  if(!E("dashNoPrice")) return;
+
+  const active=state.products.filter(p=>!p.archived);
+  const noPrice=active.filter(p=>stock(p)>0 && !Number(p.sellPrice||0));
+  const low=active.filter(p=>stock(p)>0 && Number(p.minStock||0)>0 && stock(p)<=Number(p.minStock||0));
+  const zero=active.filter(p=>stock(p)<=0);
+  const todaySales=state.sales.filter(s=>s.date===today());
+  const revenue=todaySales.reduce((sum,s)=>sum+Number(s.price||0)*Number(s.qty||0),0);
+  const profit=todaySales.reduce((sum,s)=>sum+(Number(s.price||0)*Number(s.qty||0)-saleCost(s)),0);
+  const stockUnits=active.reduce((sum,p)=>sum+Math.max(0,stock(p)),0);
+
+  E("dashNoPrice").textContent=noPrice.length;
+  E("dashLowStock").textContent=low.length;
+  E("dashZeroStock").textContent=zero.length;
+  E("dashReceipts").textContent=state.receipts.length;
+  E("dashSalesToday").textContent=todaySales.reduce((a,s)=>a+Number(s.qty||0),0);
+  E("dashRevenueToday").textContent=rub(revenue);
+  E("dashProfitToday").textContent=rub(profit);
+  E("dashStockUnits").textContent=stockUnits+" шт";
+
+  E("dashLastSales").innerHTML=state.sales.slice(0,8).map(s=>{
+    const p=state.products.find(x=>x.id===s.productId)||{};
+    return `<tr onclick="selectedProductId='${p.id||""}';view('products')">
+      <td>${fd(s.date)}</td>
+      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${s.method||""}</span></td>
+      <td>${s.qty}</td>
+      <td>${rub(Number(s.price||0)*Number(s.qty||0))}</td>
+    </tr>`;
+  }).join("") || `<tr><td colspan="4" class="muted">Продаж пока нет.</td></tr>`;
+
+  E("dashLastReceipts").innerHTML=state.receipts.slice(0,8).map(r=>`
+    <tr onclick="selectedReceiptId='${r.id}';view('receipts')">
+      <td>${fd(r.date)}</td>
+      <td>${r.supplier||"—"}</td>
+      <td>${(r.lines||[]).length}</td>
+      <td>${rub(receiptTotal(r))}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="4" class="muted">Поступлений пока нет.</td></tr>`;
+}
+
 function renderStats(){
   const active=state.products.filter(p=>!p.archived);
   stStock.textContent=active.reduce((s,p)=>s+Math.max(0,stock(p)),0);
@@ -475,6 +634,17 @@ function setCategoryFilter(cat){
   renderProducts();
 }
 
+function setProductSort(sort){
+  productSort=sort||"name";
+  renderProducts();
+}
+
+function goProductFilter(filter){
+  productFilter=filter;
+  view("products");
+  setProductFilter(filter);
+}
+
 function setProductFilter(f){
   productFilter=f;
   document.querySelectorAll(".product-filter").forEach(b=>b.classList.toggle("active", b.dataset.filter===f));
@@ -494,10 +664,21 @@ function productMatchesFilter(p){
 function renderProducts(){
   renderProductCategoryFilter();
   let q=(search?.value||"").toLowerCase();
+  const sortSelect=E("productSort");
+  if(sortSelect) sortSelect.value=productSort;
+
   let arr=state.products
     .filter(p=>productMatchesFilter(p))
     .filter(p=>!categoryFilter || (p.category||"Прочее")===categoryFilter)
     .filter(p=>[p.code,p.category,p.brand,p.model,p.name].join(" ").toLowerCase().includes(q));
+
+  arr.sort((a,b)=>{
+    if(productSort==="stockDesc") return stock(b)-stock(a);
+    if(productSort==="stockAsc") return stock(a)-stock(b);
+    if(productSort==="sellDesc") return Number(b.sellPrice||0)-Number(a.sellPrice||0);
+    if(productSort==="buyDesc") return lastBuy(b)-lastBuy(a);
+    return `${a.brand||""} ${a.model||""}`.localeCompare(`${b.brand||""} ${b.model||""}`,"ru");
+  });
 
   productsTable.innerHTML=arr.map(p=>{
     const st=stock(p);
@@ -744,11 +925,20 @@ function addLine(){
 }
 
 function renderLines(){
+  const total=lines.reduce((sum,l)=>sum+Number(l.qty||0)*Number(l.buyPrice||0),0);
+  if(E("receiptDraftTotal")) E("receiptDraftTotal").textContent=rub(total);
+
   if(!lines.length){
-    E("linesTable").innerHTML=`<tr><td colspan="5" class="muted">Список пока пуст. Заполни товар выше и нажми “Добавить товар в список”. Если нажмёшь “Сохранить всё”, текущий заполненный товар добавится автоматически.</td></tr>`;
+    E("linesTable").innerHTML=`<tr><td colspan="5" class="muted">Список пока пуст. Заполни товар выше и нажми “Добавить товар в список”. Если нажмёшь “Провести поступление”, текущий заполненный товар добавится автоматически.</td></tr>`;
     return;
   }
   E("linesTable").innerHTML=lines.map((l,i)=>`<tr><td><b>${l.brand||""} ${l.model}</b><br><span class="muted">${l.category}</span><br>${l.name||""}</td><td>${l.qty}</td><td>${rub(l.buyPrice)}</td><td>${rub(l.qty*l.buyPrice)}</td><td><button class="danger" onclick="lines.splice(${i},1);renderLines()">Удалить</button></td></tr>`).join("");
+}
+
+function clearReceiptProductForm(){
+  ["categoryNew","brand","model","name","buy","sell"].forEach(id=>E(id).value="");
+  E("qty").value=1;
+  toast("Форма товара очищена");
 }
 function findOrCreate(l){
   let c=code(l.brand,l.model);
@@ -948,7 +1138,7 @@ function deleteProduct(id){
   toast("Товар удалён");
 }
 
-function sellProduct(){let p=state.products.find(x=>x.id===saleId)||productByCode(saleSearch.value),q=Number(saleQty.value||0),price=Number(salePrice.value||0);if(!p){toast("Выбери товар");return}if(q<=0){toast("Укажи количество");return}if(q>stock(p)){toast("Недостаточно на складе");return}if(!price){toast("Укажи цену продажи");return}state.sales.unshift({id:uid("s"),productId:p.id,date:today(),qty:q,price,method:saleMethod.value,comment:saleComment.value.trim()});p.sellPrice=price;save();saleQty.value=1;saleComment.value="";render();toast("Продажа сохранена")}
+function sellProduct(){let p=state.products.find(x=>x.id===saleId)||productByCode(saleSearch.value),q=Number(saleQty.value||0),price=Number(salePrice.value||0);if(!p){toast("Выбери товар");return}if(q<=0){toast("Укажи количество");return}if(q>stock(p)){toast("Недостаточно на складе");return}if(!price){toast("Укажи цену продажи");return}state.sales.unshift({id:uid("s"),productId:p.id,date:today(),qty:q,price,method:saleMethod.value,comment:saleComment.value.trim()});p.sellPrice=price;save();saleQty.value=1;saleComment.value="";render();toast(`Продажа сохранена. Остаток: ${stock(p)} шт`)}
 function renderSales(){salesTable.innerHTML=state.sales.map(s=>{let p=state.products.find(x=>x.id===s.productId)||{};return`<tr><td>${fd(s.date)}</td><td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.code||""}</span></td><td>${s.qty}</td><td>${rub(s.price)}<br><span class="muted">${s.method}</span></td></tr>`}).join("")}
 function renderLabelMatches(){
   let q=(E("labelSearch")?.value||"").toLowerCase().trim();
