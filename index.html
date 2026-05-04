@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ТехноМир Store v1</title>
+<title>ТехноМир Магазин v1</title>
 <style>
 :root{--bg:#edf3f8;--card:#fff;--text:#172033;--muted:#64748b;--blue:#24466f;--blue2:#3b6fa8;--line:#e2e8f0;--green:#168a4b;--red:#c63642}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#dce8f4,#f4f8fb);color:var(--text)}
@@ -234,13 +234,149 @@ tbody tr:hover{
 
 #activityTable td{vertical-align:top}
 
+
+/* v23 clean design */
+:root{
+  --blue:#0058d8;
+  --blue2:#0a6bff;
+  --deep:#05234a;
+  --soft:#f7faff;
+}
+body{
+  background:
+    radial-gradient(circle at top left, rgba(10,107,255,.10), transparent 28%),
+    linear-gradient(180deg,#edf5ff 0%,#f8fbff 42%,#eaf3fb 100%);
+}
+.header{
+  background:linear-gradient(135deg,#061d3d 0%,#0b3973 100%);
+  border-radius:0 0 26px 26px;
+  max-width:100%;
+}
+.header h1{
+  font-size:30px;
+}
+.wrap{
+  max-width:1420px;
+}
+.stats .card{
+  min-height:110px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.stat-value{
+  font-size:32px;
+}
+.tabs{
+  gap:10px;
+}
+.tabs .tab{
+  min-height:44px;
+  padding:11px 18px;
+}
+.card{
+  border-radius:24px;
+  border:1px solid rgba(213,226,242,.95);
+  box-shadow:0 14px 36px rgba(18,45,82,.08);
+}
+.scan-box{
+  border-radius:20px;
+  background:linear-gradient(135deg,#f8fbff,#edf6ff);
+  border:1px solid #d8e7fa;
+}
+.scanner-status{
+  white-space:nowrap;
+  padding:10px 13px;
+  border-radius:999px;
+  background:#eaf3ff;
+  color:#0b3973;
+  font-weight:900;
+  border:1px solid #d7e7fb;
+}
+.scanner-status.ok{
+  background:#dcfce7;
+  color:#166534;
+}
+.scanner-status.error{
+  background:#fee2e2;
+  color:#991b1b;
+}
+.scan-ok{
+  box-shadow:0 0 0 4px rgba(34,197,94,.18);
+}
+.scan-error{
+  box-shadow:0 0 0 4px rgba(239,68,68,.16);
+}
+.scan-flash{
+  animation:scanFlash 1.4s ease;
+}
+@keyframes scanFlash{
+  0%{background:#bbf7d0}
+  45%{background:#dbeafe}
+  100%{background:transparent}
+}
+.product-hero{
+  border-radius:24px;
+  background:linear-gradient(135deg,#ffffff,#f5f9ff);
+}
+.quick-actions{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:10px;
+}
+.quick-actions .btn{
+  min-height:54px;
+  font-size:17px;
+}
+.quick-actions button{
+  min-height:48px;
+}
+.quick-actions .danger{
+  grid-column:1 / -1;
+  background:#fff1f2;
+  color:#be123c;
+  border:1px solid #fecdd3;
+}
+.metric{
+  border-radius:18px;
+}
+.metric b{
+  font-size:20px;
+}
+tbody tr{
+  border-radius:14px;
+}
+tbody tr:hover{
+  transform:none;
+  background:#f3f8ff;
+}
+.selected{
+  background:#e3f0ff!important;
+  box-shadow:inset 5px 0 0 #006cff;
+}
+.pill.ok{
+  background:#dcfce7;
+  color:#047857;
+}
+.pill.warn{
+  background:#fef3c7;
+  color:#a16207;
+}
+.pill.bad{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+@media(max-width:900px){
+  .quick-actions{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
 <div id="toastWrap" class="toastWrap"></div>
 <div class="wrap">
   <div class="header no-print">
-    <div><h1>ТехноМир Store</h1><p>Удобный склад: товары, поступления, продажи, остатки и QR-этикетки 58×40</p></div>
+    <div><h1>ТехноМир Магазин</h1><p>Удобный склад: товары, поступления, продажи, остатки и QR-этикетки 58×40</p></div>
     <div class="actions"><button class="btn2" onclick="backup()">⬇️ Резерв</button><button class="btn2" onclick="restore()">♻️ Восстановить</button></div>
   </div>
 
@@ -326,13 +462,14 @@ tbody tr:hover{
   <section id="view-products" class="view no-print hidden">
     <div class="layout">
       <div class="card">
-        <div class="scan-box">
+        <div class="scan-box" id="scannerBox">
           <div>
             <b>Быстрый поиск / сканер</b>
-            <div class="muted">Сканируй QR или введи модель. Список остаётся видимым, выбранный товар подсвечивается.</div>
+            <div class="muted">Сканируй QR или введи модель. Если сканер отправляет Enter, товар откроется автоматически.</div>
           </div>
+          <div class="scanner-status" id="scannerStatus">Сканер готов</div>
         </div>
-        <div class="search"><input id="search" placeholder="Поиск по модели, названию, бренду или QR" oninput="renderProducts()"><button class="btn2" onclick="search.value='';renderProducts()">Сброс</button></div>
+        <div class="search"><input id="search" placeholder="Поиск по модели, названию, бренду или QR" oninput="renderProducts()" onkeydown="handleSearchEnter(event)"><button class="btn2" onclick="search.value='';renderProducts()">Сброс</button></div>
         <div class="mini-tabs" style="margin-bottom:12px">
           <button class="btn2 product-filter active" data-filter="all" onclick="setProductFilter('all')">Все</button>
           <button class="btn2 product-filter" data-filter="stock" onclick="setProductFilter('stock')">В наличии</button>
@@ -565,7 +702,7 @@ tbody tr:hover{
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
 function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[],activityLog:[],lastBackupAt:""}}
-let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", productSort="name", pendingInvoicePhoto=null, pendingCsvRows=[];
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", productSort="name", pendingInvoicePhoto=null, pendingCsvRows=[], lastScannedProductId=null, scanBuffer="", scanLastTime=0;
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
@@ -708,6 +845,122 @@ function undoLastAction(){
   toast("Действие отменено");
 }
 
+
+function setScannerStatus(text,type="ready"){
+  const el=E("scannerStatus");
+  const box=E("scannerBox");
+  if(!el || !box) return;
+  el.textContent=text;
+  el.className="scanner-status "+type;
+  box.classList.remove("scan-ok","scan-error");
+  if(type==="ok") box.classList.add("scan-ok");
+  if(type==="error") box.classList.add("scan-error");
+  setTimeout(()=>{
+    if(el){
+      el.textContent="Сканер готов";
+      el.className="scanner-status";
+    }
+    if(box) box.classList.remove("scan-ok","scan-error");
+  },1800);
+}
+
+function beep(type="ok"){
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value=type==="ok"?880:220;
+    gain.gain.value=0.05;
+    osc.start();
+    setTimeout(()=>{osc.stop();ctx.close();},90);
+  }catch(e){}
+}
+
+function findProductByScanValue(value){
+  const q=String(value||"").trim().toLowerCase();
+  if(!q) return null;
+  return state.products.find(p=>
+    String(p.code||"").toLowerCase()===q ||
+    String(p.model||"").toLowerCase()===q ||
+    String(p.code||"").toLowerCase().endsWith(q)
+  ) || state.products.find(p=>
+    [p.code,p.model,p.name,p.brand].join(" ").toLowerCase().includes(q)
+  );
+}
+
+function processScan(value,source="scan"){
+  const raw=String(value||"").trim();
+  if(!raw) return false;
+
+  const p=findProductByScanValue(raw);
+  if(!p){
+    setScannerStatus("Товар не найден","error");
+    beep("error");
+    toast("Товар не найден: "+raw);
+    return false;
+  }
+
+  selectedProductId=p.id;
+  lastScannedProductId=p.id;
+  productFilter=p.archived?"archive":"all";
+  categoryFilter="";
+  const searchInput=E("search");
+  if(searchInput) searchInput.value="";
+  view("products");
+  renderProducts();
+
+  setScannerStatus("Найден: "+(p.brand||"")+" "+(p.model||""),"ok");
+  beep("ok");
+  setTimeout(()=>{lastScannedProductId=null;renderProducts();},1600);
+  setTimeout(()=>focusProductSearch(),80);
+  return true;
+}
+
+function handleSearchEnter(event){
+  if(event.key==="Enter"){
+    event.preventDefault();
+    const value=event.target.value.trim();
+    processScan(value,"search");
+  }
+}
+
+function focusProductSearch(){
+  const input=E("search");
+  if(input && !["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName || "")){
+    input.focus();
+  }
+}
+
+// Сканер работает как клавиатура: быстрый ввод + Enter.
+// Этот обработчик ловит быстрые последовательности даже без клика в поле поиска.
+document.addEventListener("keydown",(e)=>{
+  const tag=document.activeElement?.tagName || "";
+  const isTypingField=["INPUT","TEXTAREA","SELECT"].includes(tag);
+
+  // Не мешаем обычному ручному вводу в формах, кроме поля поиска товара.
+  if(isTypingField && document.activeElement?.id!=="search") return;
+
+  const now=Date.now();
+  if(now-scanLastTime>80) scanBuffer="";
+  scanLastTime=now;
+
+  if(e.key==="Enter"){
+    const value=scanBuffer.trim();
+    scanBuffer="";
+    if(value.length>=3){
+      e.preventDefault();
+      processScan(value,"global");
+    }
+    return;
+  }
+
+  if(e.key.length===1){
+    scanBuffer+=e.key;
+  }
+});
+
 function renderDashboard(){
   if(!E("dashNoPrice")) return;
 
@@ -820,7 +1073,7 @@ function renderProducts(){
 
   productsTable.innerHTML=arr.map(p=>{
     const st=stock(p);
-    return `<tr class="${p.id===selectedProductId?'selected':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
+    return `<tr class="${p.id===selectedProductId?'selected':''} ${p.id===lastScannedProductId?'scan-flash':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
       <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span><br>${p.name||""}${!p.sellPrice?'<br><span class="pill warn">без цены</span>':''}${(!p.archived && Number(p.minStock||0)>0 && st>0 && st<=Number(p.minStock||0))?'<br><span class="pill warn">мало остатка</span>':''}${p.archived?'<br><span class="pill warn">архив</span>':''}</td>
       <td><b>${st}</b> шт<br><span class="muted">мин: ${Number(p.minStock||0)||"—"}</span></td>
       <td>посл. ${rub(lastBuy(p))}<br><span class="muted">сред. ${rub(avgBuy(p))}</span><br><span class="muted">${lastReceiptInfo(p)}</span></td>
