@@ -231,6 +231,9 @@ tbody tr:hover{
   .category-filter-row{grid-template-columns:1fr}
 }
 
+
+#activityTable td{vertical-align:top}
+
 </style>
 </head>
 <body>
@@ -258,6 +261,7 @@ tbody tr:hover{
     <button id="tab-labels" class="btn2 tab" onclick="view('labels')">🏷️ Этикетки</button>
     <button id="tab-settings" class="btn2 tab" onclick="view('settings')">⚙️ Настройки</button>
     <button id="tab-reports" class="btn2 tab" onclick="view('reports')">📊 Отчёты</button>
+    <button id="tab-activity" class="btn2 tab" onclick="view('activity')">🕘 Действия</button>
     <button id="tab-importexport" class="btn2 tab" onclick="view('importexport')">💾 Резерв</button>
   </div>
 
@@ -493,6 +497,35 @@ tbody tr:hover{
     </div>
   </section>
 
+
+  <section id="view-activity" class="view no-print hidden">
+    <div class="layout">
+      <div class="card">
+        <h2>Журнал действий</h2>
+        <p class="muted">Здесь видно последние изменения: продажи, поступления, цены, архив, корректировки и удаление.</p>
+        <div class="actions">
+          <button class="btn2" onclick="undoLastAction()">↩️ Отменить последнее действие</button>
+          <button class="btn2" onclick="clearActivityLog()">Очистить журнал</button>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th>Дата</th><th>Действие</th><th>Описание</th></tr></thead>
+          <tbody id="activityTable"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Безопасность данных</h2>
+        <div class="box">
+          <p><b>Резервная копия:</b> <span id="backupStatusText">—</span></p>
+          <p class="muted">Перед крупными изменениями лучше скачать резерв JSON.</p>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="backup()">⬇️ Скачать резерв</button>
+          <button class="btn2" onclick="restore()">♻️ Восстановить</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="view-importexport" class="view no-print hidden">
     <div class="layout">
       <div class="card">
@@ -531,7 +564,7 @@ tbody tr:hover{
 <script>
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
-function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[]}}
+function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[],activityLog:[],lastBackupAt:""}}
 let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", productSort="name", pendingInvoicePhoto=null, pendingCsvRows=[];
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
@@ -568,7 +601,112 @@ function prepareReceiptForProduct(id){
 
 function productByCode(c){let q=String(c||"").trim().toUpperCase();return state.products.find(p=>String(p.code).toUpperCase()===q)}
 function view(v){document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));document.getElementById("view-"+v).classList.remove("hidden");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.getElementById("tab-"+v).classList.add("active");render()}
-function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports()}
+function render(){renderSelects();renderStats();renderDashboard();renderProducts();renderInventory();renderLines();renderSaleMatches();renderSales();renderLabelMatches();renderSettings();renderReceiptsJournal();renderReports();renderActivityLog()}
+
+
+function nowText(){
+  return new Date().toLocaleString("ru-RU");
+}
+
+function cloneData(value){
+  return JSON.parse(JSON.stringify(value));
+}
+
+function productTitleById(id){
+  const p=state.products.find(x=>x.id===id);
+  return p ? `${p.brand||""} ${p.model||""}`.trim() : "Товар";
+}
+
+function logAction(type, text, undo){
+  if(!state.activityLog) state.activityLog=[];
+  state.activityLog.unshift({
+    id:uid("log"),
+    date:new Date().toISOString(),
+    type,
+    text,
+    undo: undo || null
+  });
+  state.activityLog=state.activityLog.slice(0,200);
+}
+
+function activityLabel(type){
+  const map={
+    sale:"Продажа",
+    receipt:"Поступление",
+    adjustment:"Корректировка",
+    price:"Цена",
+    product:"Товар",
+    archive:"Архив",
+    delete:"Удаление",
+    backup:"Резерв"
+  };
+  return map[type] || type || "Действие";
+}
+
+function renderActivityLog(){
+  const table=E("activityTable");
+  if(!table) return;
+  const rows=(state.activityLog||[]).slice(0,80);
+  table.innerHTML=rows.length ? rows.map(log=>`
+    <tr>
+      <td>${new Date(log.date).toLocaleString("ru-RU")}</td>
+      <td><span class="pill warn">${activityLabel(log.type)}</span></td>
+      <td>${log.text||"—"}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="3" class="muted">Журнал пока пуст.</td></tr>`;
+
+  const backupText=E("backupStatusText");
+  if(backupText){
+    backupText.textContent=state.lastBackupAt
+      ? `последний резерв: ${new Date(state.lastBackupAt).toLocaleString("ru-RU")}`
+      : "резерв ещё не создавался";
+  }
+}
+
+function clearActivityLog(){
+  if(!confirm("Очистить журнал действий? Данные товаров не удалятся.")) return;
+  state.activityLog=[];
+  save();
+  render();
+  toast("Журнал очищен");
+}
+
+function undoLastAction(){
+  const log=(state.activityLog||[]).find(x=>x.undo);
+  if(!log){
+    toast("Нет действия, которое можно отменить");
+    return;
+  }
+
+  if(!confirm(`Отменить последнее действие: ${log.text}?`)) return;
+
+  const u=log.undo;
+
+  if(u.kind==="deleteSale"){
+    state.sales=state.sales.filter(s=>s.id!==u.saleId);
+  } else if(u.kind==="deleteAdjustment"){
+    state.adjustments=(state.adjustments||[]).filter(a=>a.id!==u.adjustmentId);
+  } else if(u.kind==="deleteReceipt"){
+    state.receipts=state.receipts.filter(r=>r.id!==u.receiptId);
+  } else if(u.kind==="restoreProduct"){
+    const idx=state.products.findIndex(p=>p.id===u.product.id);
+    if(idx>=0) state.products[idx]=u.product;
+  } else if(u.kind==="restoreReceipt"){
+    state.receipts.unshift(u.receipt);
+  } else if(u.kind==="setProduct"){
+    const idx=state.products.findIndex(p=>p.id===u.product.id);
+    if(idx>=0) state.products[idx]=u.product;
+  } else {
+    toast("Этот тип действия пока нельзя отменить");
+    return;
+  }
+
+  state.activityLog=state.activityLog.filter(x=>x.id!==log.id);
+  logAction("product","Отменено: "+log.text,null);
+  save();
+  render();
+  toast("Действие отменено");
+}
 
 function renderDashboard(){
   if(!E("dashNoPrice")) return;
@@ -782,6 +920,7 @@ function editProduct(id){
   const minStock=prompt("Минимальный остаток для уведомления:", p.minStock||"") ?? null;
   if(minStock===null) return;
 
+  const previous=cloneData(p);
   const oldCode=p.code;
   p.category=category.trim()||"Прочее";
   p.brand=brand.trim();
@@ -801,6 +940,7 @@ function editProduct(id){
 
   if(p.category && !state.categories.includes(p.category)) state.categories.push(p.category);
 
+  logAction("product",`Отредактирован товар: ${p.brand||""} ${p.model||""}`,{kind:"setProduct",product:previous});
   save();
   render();
   toast("Товар отредактирован");
@@ -812,7 +952,9 @@ function editMinStock(id){
   if(!p) return;
   const value=prompt("Минимальный остаток для уведомления:", p.minStock||"");
   if(value===null) return;
+  const previous=cloneData(p);
   p.minStock=Number(value||0);
+  logAction("product",`Мин. остаток: ${p.brand||""} ${p.model||""} · ${previous.minStock||0} → ${p.minStock||0}`,{kind:"setProduct",product:previous});
   save();
   render();
   toast("Минимальный остаток обновлён");
@@ -1005,6 +1147,7 @@ function saveReceipt(){
   });
 
   state.receipts.unshift(r);
+  logAction("receipt",`Проведено поступление ${r.number||"без номера"} · ${r.lines.length} строк · ${rub(receiptTotal(r))}`,{kind:"deleteReceipt",receiptId:r.id});
   lines=[];
   ["invNo","supplierNew","comment"].forEach(id=>E(id).value="");
   E("invoicePhoto").value="";
@@ -1042,6 +1185,7 @@ function saveInitialStock(){
   });
 
   state.receipts.unshift(r);
+  logAction("receipt",`Внесён начальный остаток · ${r.lines.length} строк`,{kind:"deleteReceipt",receiptId:r.id});
   lines=[];
   if(E("invoicePhoto")) E("invoicePhoto").value="";
   if(E("invoicePhotoStatus")) E("invoicePhotoStatus").textContent="";
@@ -1098,11 +1242,13 @@ function renderSaleMatches(){
 function toggleArchiveProduct(id){
   const p=state.products.find(x=>x.id===id);
   if(!p) return;
+  const previous=cloneData(p);
   p.archived=!p.archived;
   if(p.archived && selectedProductId===id){
     const next=state.products.find(x=>!x.archived);
     if(next) selectedProductId=next.id;
   }
+  logAction("archive",`${p.archived ? "В архив" : "Возврат из архива"}: ${p.brand||""} ${p.model||""}`,{kind:"setProduct",product:previous});
   save();
   render();
   toast(p.archived ? "Товар перенесён в архив" : "Товар возвращён из архива");
@@ -1124,6 +1270,7 @@ function deleteProduct(id){
 
   if((salesCount || receiptCount) && !confirm("У товара есть история поступлений/продаж. При удалении эта история тоже будет удалена. Продолжить?")) return;
 
+  const deletedProduct=cloneData(p);
   state.products = state.products.filter(x=>x.id!==id);
   state.receipts.forEach(r=>r.lines = r.lines.filter(l=>l.productId!==id));
   state.receipts = state.receipts.filter(r=>r.lines.length);
@@ -1133,12 +1280,29 @@ function deleteProduct(id){
   if(saleId===id) saleId=null;
   if(labelId===id) labelId=null;
 
+  logAction("delete",`Удалён товар: ${p.brand||""} ${p.model||""}`,{kind:"restoreProduct",product:deletedProduct});
   save();
   render();
   toast("Товар удалён");
 }
 
-function sellProduct(){let p=state.products.find(x=>x.id===saleId)||productByCode(saleSearch.value),q=Number(saleQty.value||0),price=Number(salePrice.value||0);if(!p){toast("Выбери товар");return}if(q<=0){toast("Укажи количество");return}if(q>stock(p)){toast("Недостаточно на складе");return}if(!price){toast("Укажи цену продажи");return}state.sales.unshift({id:uid("s"),productId:p.id,date:today(),qty:q,price,method:saleMethod.value,comment:saleComment.value.trim()});p.sellPrice=price;save();saleQty.value=1;saleComment.value="";render();toast(`Продажа сохранена. Остаток: ${stock(p)} шт`)}
+function sellProduct(){
+  let p=state.products.find(x=>x.id===saleId)||productByCode(saleSearch.value),q=Number(saleQty.value||0),price=Number(salePrice.value||0);
+  if(!p){toast("Выбери товар");return}
+  if(p.archived){toast("Товар в архиве, продажа невозможна");return}
+  if(q<=0){toast("Укажи количество");return}
+  const before=stock(p);
+  if(before<=0){toast("Товара нет в наличии");return}
+  if(q>before){toast(`Недостаточно на складе. Доступно: ${before} шт`);return}
+  if(!price){
+    if(!confirm("У товара не указана цена продажи. Продать с ценой 0 ₽?")) return;
+  }
+  const sale={id:uid("s"),productId:p.id,date:today(),qty:q,price,method:saleMethod.value,comment:saleComment.value.trim()};
+  state.sales.unshift(sale);
+  if(price) p.sellPrice=price;
+  logAction("sale",`Продажа: ${p.brand||""} ${p.model||""} · ${q} шт · ${rub(price*q)} · остаток ${before} → ${before-q}`,{kind:"deleteSale",saleId:sale.id});
+  save();saleQty.value=1;saleComment.value="";render();toast(`Продажа сохранена. Остаток: ${stock(p)} шт`);
+}
 function renderSales(){salesTable.innerHTML=state.sales.map(s=>{let p=state.products.find(x=>x.id===s.productId)||{};return`<tr><td>${fd(s.date)}</td><td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.code||""}</span></td><td>${s.qty}</td><td>${rub(s.price)}<br><span class="muted">${s.method}</span></td></tr>`}).join("")}
 function renderLabelMatches(){
   let q=(E("labelSearch")?.value||"").toLowerCase().trim();
@@ -1280,13 +1444,15 @@ function applyInventoryAdjustment(id){
   if(!confirm(`По программе: ${current} шт. Фактически: ${actual} шт. Создать корректировку ${diff>0?"+":""}${diff} шт?`)) return;
 
   if(!state.adjustments) state.adjustments=[];
-  state.adjustments.unshift({
+  const adj={
     id:uid("adj"),
     productId:id,
     date:today(),
     diff,
     comment:E("inventoryComment").value.trim() || "Инвентаризация"
-  });
+  };
+  state.adjustments.unshift(adj);
+  logAction("adjustment",`Корректировка: ${p.brand||""} ${p.model||""} · ${diff>0?"+":""}${diff} шт · остаток ${current} → ${actual}`,{kind:"deleteAdjustment",adjustmentId:adj.id});
 
   save();
   render();
@@ -1422,6 +1588,7 @@ function renderReceiptDetails(){
 function editReceiptHeader(id){
   const r=state.receipts.find(x=>x.id===id);
   if(!r) return;
+  const previous=cloneData(r);
 
   const number=prompt("Номер накладной:", r.number||"");
   if(number===null) return;
@@ -1444,6 +1611,7 @@ function editReceiptHeader(id){
 
   if(r.supplier && r.supplier!=="Начальные остатки" && !state.suppliers.includes(r.supplier)) state.suppliers.push(r.supplier);
 
+  logAction("receipt",`Изменена шапка поступления: ${r.number||"без номера"}`,{kind:"restoreReceipt",receipt:previous});
   save();
   render();
   toast("Поступление отредактировано");
@@ -1453,6 +1621,7 @@ function editReceiptLine(id,index){
   const r=state.receipts.find(x=>x.id===id);
   if(!r || !r.lines[index]) return;
 
+  const previous=cloneData(r);
   const l=r.lines[index];
   const p=state.products.find(x=>x.id===l.productId)||{};
 
@@ -1472,6 +1641,7 @@ function editReceiptLine(id,index){
   l.qty=q;
   l.buyPrice=b;
 
+  logAction("receipt",`Изменена строка поступления: ${p.brand||""} ${p.model||""}`,{kind:"restoreReceipt",receipt:previous});
   save();
   render();
   toast("Строка поступления изменена");
@@ -1490,9 +1660,11 @@ function deleteReceipt(id){
 
   if(risky.length && !confirm("После удаления по некоторым товарам остаток станет отрицательным, потому что уже были продажи. Всё равно удалить?")) return;
 
+  const deletedReceipt=cloneData(r);
   state.receipts=state.receipts.filter(x=>x.id!==id);
   selectedReceiptId=state.receipts[0]?.id||null;
 
+  logAction("delete",`Удалено поступление: ${r.number||"без номера"}`,{kind:"restoreReceipt",receipt:deletedReceipt});
   save();
   render();
   toast("Поступление удалено");
@@ -1849,7 +2021,17 @@ function exportSalesCsv(){
   downloadFile("tehnomir_sales_"+today()+".csv", csv, "text/csv;charset=utf-8");
 }
 
-function backup(){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));a.download="tehnomir_store_backup_"+today()+".json";a.click()} function restore(){let i=document.createElement("input");i.type="file";i.accept="application/json";i.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state={...base(),...JSON.parse(r.result)};save();render();toast("База восстановлена")};r.readAsText(f)};i.click()} function clearAll(){if(confirm("Очистить базу?")){localStorage.removeItem(KEY);state=base();selectedProductId=null;saleId=null;labelId=null;lines=[];render()}}
+function backup(){
+  state.lastBackupAt=new Date().toISOString();
+  logAction("backup","Скачана резервная копия JSON",null);
+  save();
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));
+  a.download="tehnomir_store_backup_"+today()+".json";
+  a.click();
+  render();
+}
+function restore(){let i=document.createElement("input");i.type="file";i.accept="application/json";i.onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{state={...base(),...JSON.parse(r.result)};save();render();toast("База восстановлена")};r.readAsText(f)};i.click()} function clearAll(){if(confirm("Очистить базу?")){localStorage.removeItem(KEY);state=base();selectedProductId=null;saleId=null;labelId=null;lines=[];render()}}
 function h(s){let x=0;for(let i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))>>>0;return x} function renderQRInto(el,text,size=90){let n=21,cell=size/n,H=h(text),r="";function bit(x,y){return((H+x*73856093+y*19349663)>>>0)%3===0}function find(x,y){r+=`<rect x="${x*cell}" y="${y*cell}" width="${7*cell}" height="${7*cell}" fill="#000"/><rect x="${(x+1)*cell}" y="${(y+1)*cell}" width="${5*cell}" height="${5*cell}" fill="#fff"/><rect x="${(x+2)*cell}" y="${(y+2)*cell}" width="${3*cell}" height="${3*cell}" fill="#000"/>`}find(0,0);find(14,0);find(0,14);for(let y=0;y<n;y++)for(let x=0;x<n;x++){if((x<7&&y<7)||(x>=14&&y<7)||(x<7&&y>=14))continue;if(bit(x,y))r+=`<rect x="${x*cell}" y="${y*cell}" width="${cell}" height="${cell}" fill="#000"/>`}el.innerHTML=`<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg"><rect width="${size}" height="${size}" fill="#fff"/>${r}</svg>`} function makeQR(id,text,size){let el=document.getElementById(id);if(el)renderQRInto(el,text,size)}
 E("invDate").value=today();renderSelects();render();
 </script>
