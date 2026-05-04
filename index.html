@@ -360,18 +360,18 @@ tbody tr:hover{
     <div class="layout">
       <div class="card">
         <h2>Импорт из Excel / CSV</h2>
-        <p class="muted">Для переноса старой таблицы: сохрани Excel как CSV и загрузи сюда. Программа создаст товары как начальные остатки.</p>
+        <p class="muted">Для переноса старой таблицы: сохрани Excel как CSV и загрузи сюда. Поддерживаются твои колонки: Код товара, Наименование, Цена, Остаток, Дата поступления, Закупочная цена. Серые строки-разделы вроде “Телевизоры” будут распознаны как категории.</p>
         <div class="box">
           <b>Колонки CSV:</b>
-          <p class="muted">category, brand, model, name, qty, buyPrice, sellPrice</p>
-          <p class="muted">Можно использовать русские заголовки: категория, бренд, модель, название, количество, закупка, продажа.</p>
+          <p class="muted">Поддерживаемые колонки: Код товара / model, Наименование / name, Цена / sellPrice, Остаток / qty, Закупочная цена / buyPrice, Дата поступления.</p>
+          <p class="muted">Если в таблице есть строка-раздел “Телевизоры”, “Стиральные машины” и т.п., она станет категорией для товаров ниже. Позиции с остатком 0 тоже добавятся в каталог, но не будут считаться “в наличии”.</p>
         </div>
         <div class="actions">
           <button class="btn2" onclick="downloadCsvTemplate()">⬇️ Скачать шаблон CSV</button>
           <button class="btn" onclick="startCsvImport()">⬆️ Загрузить CSV</button>
         </div>
         <input id="csvImportInput" type="file" accept=".csv,text/csv" class="hidden" onchange="handleCsvImport(event)">
-        <h3 style="margin-top:18px">Предпросмотр импорта</h3>
+        <h3 style="margin-top:18px">Предпросмотр импорта</h3><p class="muted">В предпросмотр попадут все товары из таблицы. Остаток пустой или 0 будет импортирован как 0, чтобы товар остался в каталоге.</p>
         <div style="overflow:auto;max-height:420px">
           <table>
             <thead><tr><th>Товар</th><th>Кол-во</th><th>Закупка</th><th>Продажа</th></tr></thead>
@@ -792,7 +792,7 @@ function saveInitialStock(){
   let r={
     id:uid("r"),
     number:"Начальный остаток",
-    date:today(),
+    date:(normalizeCsvDate(pendingCsvRows.find(x=>x.date)?.date) || today()),
     supplier:"Начальные остатки",
     comment:"Товар был в наличии до запуска программы",
     lines:[]
@@ -1322,9 +1322,11 @@ function downloadFile(name, content, type="text/plain"){
 
 function downloadCsvTemplate(){
   const rows=[
-    ["category","brand","model","name","qty","buyPrice","sellPrice"],
-    ["Стиральные машины","LG","F2Y1NS3W","Стиральная машина LG 9 кг белая","2","29000","35000"],
-    ["Холодильники","HITACHI","R-V720PUC1 TWH","Холодильник HITACHI белый","1","103000","121000"]
+    ["Код товара","Наименование","Цена","Мин.Запас","Остаток","Дата поступления","Закупочная цена"],
+    ["Телевизоры","","","","","",""],
+    ["YMD50AHURUS1","Телевизор Viomi 50 QLED","19500","1","3","25.03.2026","17500"],
+    ["Стиральные машины","","","","","",""],
+    ["F2Y1VS3W","Стиральная машина LG 9 кг белый","35000","1","2","","29000"]
   ];
   downloadFile("tehnomir_import_template.csv", rows.map(r=>r.map(csvEscape).join(";")).join("\\n"), "text/csv;charset=utf-8");
 }
@@ -1366,21 +1368,60 @@ function parseCsv(text){
 }
 
 function normalizeHeader(h){
-  return String(h||"").toLowerCase().replace(/ё/g,"е").trim();
+  return String(h||"")
+    .toLowerCase()
+    .replace(/ё/g,"е")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function detectCategoryRow(rawRow, mapped){
+  const filled = rawRow.map(x=>String(x||"").trim()).filter(Boolean);
+  if(filled.length !== 1) return "";
+  const value = filled[0];
+
+  // Не считаем товаром строку, где есть код/модель/цены.
+  if(mapped.model || mapped.name || mapped.qty || mapped.buyPrice || mapped.sellPrice) return "";
+
+  // Типичные разделы из Excel: "Телевизоры", "Стиральные машины".
+  if(value.length > 2 && !/\d/.test(value)) return value;
+  return "";
+}
+
+function guessCategoryFromName(name){
+  const s=String(name||"").toLowerCase();
+  if(s.includes("телевиз")) return "Телевизоры";
+  if(s.includes("стираль")) return "Стиральные машины";
+  if(s.includes("холодиль")) return "Холодильники";
+  if(s.includes("мороз")) return "Морозильники";
+  if(s.includes("кондиц")) return "Кондиционеры";
+  if(s.includes("плит")) return "Плиты";
+  if(s.includes("микроволн")) return "Микроволновки";
+  return "Прочее";
+}
+
+function guessBrandFromName(name){
+  const s=String(name||"").trim();
+  const brands=["LG","Samsung","TCL","HITACHI","Haier","Centek","Razz","Viomi","Сбер","Blaupunkt","ASKO","Pozis","POZIS"];
+  const found=brands.find(b=>new RegExp(`(^|\\\\s)${b.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\$&")}(\\\\s|$)`, "i").test(s));
+  return found || "";
 }
 
 function mapCsvRows(rows){
   if(!rows.length) return [];
+
   const header=rows[0].map(normalizeHeader);
 
   const aliases={
-    category:["category","категория"],
+    category:["category","категория","раздел"],
     brand:["brand","бренд","марка"],
-    model:["model","модель"],
-    name:["name","название","товар","описание"],
+    model:["model","модель","код товара","код","артикул"],
+    name:["name","название","товар","описание","наименование"],
     qty:["qty","количество","кол-во","остаток"],
+    minStock:["мин.запас","мин запас","минимальный запас"],
     buyPrice:["buyprice","закупка","закупочная цена","цена закупки"],
-    sellPrice:["sellprice","продажа","продажная цена","цена продажи"]
+    sellPrice:["sellprice","продажа","продажная цена","цена продажи","цена"],
+    date:["дата поступления","date","дата"]
   };
 
   const idx={};
@@ -1388,15 +1429,55 @@ function mapCsvRows(rows){
     idx[key]=header.findIndex(h=>aliases[key].includes(h));
   });
 
-  return rows.slice(1).map(r=>({
-    category: idx.category>=0 ? r[idx.category] : "Прочее",
-    brand: idx.brand>=0 ? r[idx.brand] : "",
-    model: idx.model>=0 ? r[idx.model] : "",
-    name: idx.name>=0 ? r[idx.name] : "",
-    qty: Number(String(idx.qty>=0 ? r[idx.qty] : "1").replace(",", ".")) || 0,
-    buyPrice: Number(String(idx.buyPrice>=0 ? r[idx.buyPrice] : "0").replace(",", ".")) || 0,
-    sellPrice: Number(String(idx.sellPrice>=0 ? r[idx.sellPrice] : "0").replace(",", ".")) || 0
-  })).filter(x=>x.model && x.qty>0);
+  let currentCategory="";
+  const result=[];
+
+  rows.slice(1).forEach(raw=>{
+    const get=(key)=>idx[key]>=0 ? String(raw[idx[key]]||"").trim() : "";
+    const mapped={
+      category:get("category"),
+      brand:get("brand"),
+      model:get("model"),
+      name:get("name"),
+      qty:get("qty"),
+      buyPrice:get("buyPrice"),
+      sellPrice:get("sellPrice"),
+      date:get("date")
+    };
+
+    const categoryRow=detectCategoryRow(raw, mapped);
+    if(categoryRow){
+      currentCategory=categoryRow;
+      return;
+    }
+
+    const model=mapped.model;
+    const name=mapped.name;
+    const qty=Number(String(mapped.qty || "0").replace(",", ".").replace(/\s/g,"")) || 0;
+    const buyPrice=Number(String(mapped.buyPrice || "0").replace(",", ".").replace(/\s/g,"")) || 0;
+    const sellPrice=Number(String(mapped.sellPrice || "0").replace(",", ".").replace(/\s/g,"")) || 0;
+
+    // Пропускаем пустые строки и служебные строки.
+    if(!model && !name) return;
+    // Остаток 0 или пустой тоже импортируем, чтобы товар был в каталоге.
+    // Такие позиции не увеличат остаток, но сохранят цену/закупку в истории импорта.
+
+    const category=mapped.category || currentCategory || guessCategoryFromName(name);
+    const brand=mapped.brand || guessBrandFromName(name);
+
+    result.push({
+      category,
+      brand,
+      model: model || name,
+      name: name || model,
+      qty,
+      buyPrice,
+      sellPrice,
+      date: mapped.date || ""
+    });
+  });
+
+  return result;
 }
 
 function handleCsvImport(event){
@@ -1439,6 +1520,15 @@ function clearCsvPreview(){
   renderCsvPreview();
 }
 
+
+function normalizeCsvDate(v){
+  const s=String(v||"").trim();
+  const m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(m) return `${m[3]}-${String(m[2]).padStart(2,"0")}-${String(m[1]).padStart(2,"0")}`;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  return "";
+}
+
 function confirmCsvImport(){
   if(!pendingCsvRows.length){
     toast("Сначала загрузи CSV");
@@ -1451,7 +1541,7 @@ function confirmCsvImport(){
     number:"Импорт CSV",
     date:today(),
     supplier:"Начальные остатки",
-    comment:"Импорт из CSV/Excel",
+    comment:"Импорт из CSV/Excel. Товары с нулевым/пустым остатком добавлены в каталог с остатком 0.",
     lines:[]
   };
 
