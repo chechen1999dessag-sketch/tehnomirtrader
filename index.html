@@ -1371,6 +1371,203 @@ button[data-filter="low"],
   .control-panel .stats{grid-template-columns:1fr !important}
 }
 
+
+/* v28 — navigation and spacing fix */
+.header{
+  min-height:148px !important;
+  padding:24px 42px 66px !important;
+}
+.header h1{
+  font-size:42px !important;
+}
+.header p{
+  font-size:15px !important;
+}
+.control-panel{
+  margin-top:-50px !important;
+  padding:16px !important;
+  border-radius:24px !important;
+}
+
+/* compact stats so the top area does not feel heavy */
+.control-panel .stats{
+  grid-template-columns:repeat(4,minmax(190px,1fr)) !important;
+  gap:12px !important;
+}
+.stat-card{
+  min-height:92px !important;
+  padding:17px 18px 15px 82px !important;
+}
+.stat-card .stat-icon{
+  width:48px !important;
+  height:48px !important;
+  left:20px !important;
+  top:22px !important;
+}
+.stat-value{
+  font-size:29px !important;
+}
+
+/* full navigation, no empty white strip */
+.main-tabs{
+  display:grid !important;
+  grid-template-columns:repeat(7,minmax(128px,1fr)) minmax(96px,.55fr) !important;
+  gap:8px !important;
+  align-items:stretch !important;
+  overflow:visible !important;
+  padding-top:12px !important;
+  margin-top:12px !important;
+  border-top:1px solid #edf3fa !important;
+}
+.main-tabs .tab,
+.more-btn{
+  width:100% !important;
+  height:48px !important;
+  min-height:48px !important;
+  padding:0 10px !important;
+  border-radius:14px !important;
+  border:1px solid #dfeaf7 !important;
+  background:linear-gradient(180deg,#ffffff,#f7fbff) !important;
+  color:#173152 !important;
+  box-shadow:0 8px 18px rgba(23,49,82,.04) !important;
+  font-size:14px !important;
+}
+.main-tabs .tab.active{
+  color:#fff !important;
+  background:linear-gradient(135deg,#006dff,#0059d4) !important;
+  border-color:#006dff !important;
+  box-shadow:0 12px 24px rgba(0,109,255,.22) !important;
+}
+.main-tabs .tab.active:after{
+  display:none !important;
+}
+.more-menu{
+  position:relative !important;
+  margin-left:0 !important;
+}
+.more-btn{
+  font-weight:900 !important;
+}
+.more-dropdown{
+  position:absolute !important;
+  right:0 !important;
+  top:56px !important;
+  z-index:9999 !important;
+  width:360px !important;
+  padding:10px !important;
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:8px !important;
+  border-radius:18px !important;
+  background:rgba(255,255,255,.98) !important;
+  border:1px solid #dbe8f7 !important;
+  box-shadow:0 24px 52px rgba(8,36,78,.20) !important;
+}
+.more-dropdown.hidden{
+  display:none !important;
+}
+.more-dropdown .menu-link{
+  width:100% !important;
+  height:46px !important;
+  min-height:46px !important;
+  justify-content:flex-start !important;
+  border-radius:12px !important;
+  background:#f8fbff !important;
+  color:#173152 !important;
+  border:1px solid #e4eef9 !important;
+}
+
+/* Dashboard moves up, no giant empty gap */
+.view{
+  margin-top:12px !important;
+}
+.dashboard-grid{
+  grid-template-columns:minmax(520px,1fr) minmax(520px,.9fr) !important;
+  gap:16px !important;
+}
+.dashboard-grid .card{
+  min-height:0 !important;
+}
+.task-grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+.task-grid-3 .task-card{
+  min-height:104px !important;
+  padding:14px !important;
+}
+
+/* Stronger, cleaner selected product */
+#productsTable tr.selected{
+  background:linear-gradient(90deg,#d9ebff 0%,#f4faff 100%) !important;
+  box-shadow:
+    inset 8px 0 0 #005eea,
+    inset -4px 0 0 #82c0ff,
+    0 10px 26px rgba(0,94,234,.16) !important;
+  outline:2px solid rgba(0,94,234,.34) !important;
+  outline-offset:-2px !important;
+}
+#productsTable tr.selected td:first-child{
+  position:relative;
+}
+#productsTable tr.selected td:first-child:before{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:50%;
+  width:8px;
+  height:42px;
+  border-radius:999px;
+  transform:translateY(-50%);
+  background:#006dff;
+  box-shadow:0 0 0 5px rgba(0,109,255,.10);
+}
+
+/* Make product card less visually scattered */
+.product-hero{
+  min-height:170px !important;
+}
+.quick-actions{
+  gap:9px !important;
+}
+.quick-actions .primary-sell{
+  min-height:60px !important;
+}
+
+/* keep page from horizontal scroll */
+body{
+  overflow-x:hidden !important;
+}
+
+/* responsive navigation */
+@media(max-width:1380px){
+  .main-tabs{
+    grid-template-columns:repeat(4,minmax(150px,1fr)) !important;
+  }
+  .more-menu{
+    grid-column:auto !important;
+  }
+}
+@media(max-width:900px){
+  .main-tabs{
+    grid-template-columns:1fr 1fr !important;
+  }
+  .more-dropdown{
+    left:0 !important;
+    right:auto !important;
+    width:min(360px,calc(100vw - 40px)) !important;
+    grid-template-columns:1fr !important;
+  }
+  .dashboard-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+@media(max-width:620px){
+  .main-tabs{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1398,16 +1595,16 @@ button[data-filter="low"],
     <button id="tab-dashboard" class="btn2 tab active" onclick="view('dashboard')">🏠 Главная</button>
     <button id="tab-products" class="btn2 tab" onclick="view('products')">▣ Товары</button>
     <button id="tab-receipt" class="btn2 tab" onclick="view('receipt')">↓ Поступление</button>
+    <button id="tab-receipts" class="btn2 tab" onclick="view('receipts')">▥ Журнал</button>
     <button id="tab-sales" class="btn2 tab" onclick="view('sales')">🛒 Продажи</button>
     <button id="tab-labels" class="btn2 tab" onclick="view('labels')">◇ Этикетки</button>
+    <button id="tab-inventory" class="btn2 tab" onclick="view('inventory')">▤ Инвентаризация</button>
     <div class="more-menu">
       <button class="btn2 more-btn" type="button" onclick="toggleMoreMenu(event)">⋯ Ещё</button>
       <div id="moreMenu" class="more-dropdown hidden">
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('inventory')">▤ Инвентаризация</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('receipts')">▥ Журнал поступлений</button>
         <button class="btn2 menu-link" type="button" onclick="viewFromMenu('reports')">📊 Отчёты</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Журнал действий</button>
-        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('importexport')">💾 Резерв и восстановление</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('activity')">🕘 Действия</button>
+        <button class="btn2 menu-link" type="button" onclick="viewFromMenu('importexport')">💾 Резерв</button>
         <button class="btn2 menu-link" type="button" onclick="viewFromMenu('settings')">⚙ Настройки</button>
       </div>
     </div>
