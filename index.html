@@ -169,6 +169,17 @@ tbody tr:hover{
   .file-box{grid-template-columns:1fr}
 }
 
+
+.category-filter-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-bottom:12px;
+}
+@media(max-width:720px){
+  .category-filter-row{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -214,6 +225,12 @@ tbody tr:hover{
           <button class="btn2 product-filter" data-filter="noPrice" onclick="setProductFilter('noPrice')">Без цены</button>
           <button class="btn2 product-filter" data-filter="zero" onclick="setProductFilter('zero')">Нулевой остаток</button>
           <button class="btn2 product-filter" data-filter="archive" onclick="setProductFilter('archive')">Архив</button>
+        </div>
+        <div class="category-filter-row">
+          <select id="productCategoryFilter" onchange="setCategoryFilter(this.value)">
+            <option value="">Все категории</option>
+          </select>
+          <button class="btn2" onclick="setCategoryFilter('')">Сбросить категорию</button>
         </div>
         <div style="overflow:auto"><table><thead><tr><th>Товар</th><th>Остаток</th><th>Закупка</th><th>Продажа</th><th>Статус</th></tr></thead><tbody id="productsTable"></tbody></table></div>
       </div>
@@ -406,7 +423,7 @@ tbody tr:hover{
 const KEY="tehnomir_store_v1";
 const E = (id) => document.getElementById(id);
 function base(){return{categories:["Стиральные машины","Холодильники","Морозильники","Кондиционеры","Телевизоры","Плиты","Микроволновки","Мелкая техника","Аксессуары","Прочее"],suppliers:["И.П. Амираев Амир"],products:[],receipts:[],sales:[],adjustments:[]}}
-let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", pendingInvoicePhoto=null, pendingCsvRows=[];
+let state=load(), selectedProductId=state.products.find(p=>!p.archived)?.id||state.products[0]?.id||null, selectedReceiptId=state.receipts[0]?.id||null, saleId=null, labelId=null, inventoryId=null, lines=[], productFilter="all", categoryFilter="", pendingInvoicePhoto=null, pendingCsvRows=[];
 function load(){try{return {...base(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return base()}}
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function toast(t){let e=document.createElement("div");e.className="toast";e.textContent=t;toastWrap.appendChild(e);setTimeout(()=>e.remove(),2500)}
@@ -450,6 +467,22 @@ function renderStats(){
   stBuy.textContent=rub(active.reduce((s,p)=>s+Math.max(0,stock(p))*avgBuy(p),0));
   stToday.textContent=state.sales.filter(s=>s.date===today()).reduce((a,s)=>a+Number(s.qty||0),0);
 }
+function renderProductCategoryFilter(){
+  const select=E("productCategoryFilter");
+  if(!select) return;
+  const current=categoryFilter;
+  const cats=[...new Set(state.products.map(p=>p.category||"Прочее").filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ru"));
+  select.innerHTML='<option value="">Все категории</option>'+cats.map(c=>`<option value="${c}">${c}</option>`).join("");
+  select.value=current;
+}
+
+function setCategoryFilter(cat){
+  categoryFilter=cat||"";
+  const select=E("productCategoryFilter");
+  if(select) select.value=categoryFilter;
+  renderProducts();
+}
+
 function setProductFilter(f){
   productFilter=f;
   document.querySelectorAll(".product-filter").forEach(b=>b.classList.toggle("active", b.dataset.filter===f));
@@ -466,9 +499,11 @@ function productMatchesFilter(p){
 }
 
 function renderProducts(){
+  renderProductCategoryFilter();
   let q=(search?.value||"").toLowerCase();
   let arr=state.products
     .filter(p=>productMatchesFilter(p))
+    .filter(p=>!categoryFilter || (p.category||"Прочее")===categoryFilter)
     .filter(p=>[p.code,p.category,p.brand,p.model,p.name].join(" ").toLowerCase().includes(q));
 
   productsTable.innerHTML=arr.map(p=>{
