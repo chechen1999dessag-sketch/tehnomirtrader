@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ТехноМир Магазин v39</title>
+<title>ТехноМир Магазин v40</title>
 <style>
 :root{--bg:#edf3f8;--card:#fff;--text:#172033;--muted:#64748b;--blue:#24466f;--blue2:#3b6fa8;--line:#e2e8f0;--green:#168a4b;--red:#c63642}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#dce8f4,#f4f8fb);color:var(--text)}
@@ -3466,40 +3466,57 @@ function editProduct(id){
   const p=state.products.find(x=>x.id===id);
   if(!p) return;
 
-  const category=prompt("Категория:", p.category||"") ?? null;
-  if(category===null) return;
+  const previous=cloneData(p);
+
+  const categories = [...new Set([...(state.categories||[]), ...state.products.map(x=>x.category).filter(Boolean)])]
+    .filter(Boolean)
+    .sort((a,b)=>a.localeCompare(b,"ru"));
+
+  let list = categories.map((c,i)=>`${i+1}. ${c}`).join("\n");
+  let catAnswer = prompt(
+    `Категория товара:\n\n${list}\n\nВведи номер категории из списка или напиши новую категорию:`,
+    p.category || ""
+  );
+  if(catAnswer===null) return;
+
+  catAnswer = String(catAnswer).trim();
+  let category = p.category || "Прочее";
+  if(catAnswer){
+    const n = Number(catAnswer);
+    if(Number.isInteger(n) && n>=1 && n<=categories.length){
+      category = categories[n-1];
+    }else{
+      category = catAnswer;
+    }
+  }
+
+  if(category && !state.categories.includes(category)){
+    state.categories.push(category);
+  }
+
   const brand=prompt("Бренд:", p.brand||"") ?? null;
   if(brand===null) return;
+
   const model=prompt("Модель:", p.model||"") ?? null;
   if(model===null) return;
+
   const name=prompt("Название/описание:", p.name||"") ?? null;
   if(name===null) return;
+
   const sell=prompt("Продажная цена:", p.sellPrice||"") ?? null;
   if(sell===null) return;
 
-  const previous=cloneData(p);
-  const oldCode=p.code;
-  p.category=category.trim()||"Прочее";
+  p.category=category;
   p.brand=brand.trim();
   p.model=model.trim();
   p.name=name.trim();
   p.sellPrice=Number(sell||0);
+  p.code=makeCode(p.brand,p.model);
 
-  const newCode=code(p.brand,p.model);
-  // Если новый код не занят другим товаром, обновляем QR-код.
-  if(!state.products.some(x=>x.id!==p.id && x.code===newCode)) {
-    p.code=newCode;
-  } else {
-    p.code=oldCode;
-    toast("Код модели уже существует, QR-код оставлен прежним");
-  }
-
-  if(p.category && !state.categories.includes(p.category)) state.categories.push(p.category);
-
-  logAction("product",`Отредактирован товар: ${p.brand||""} ${p.model||""}`,{kind:"setProduct",product:previous});
+  logAction("product",`Редактирование товара: ${p.brand} ${p.model}`,{kind:"setProduct",product:previous});
   save();
   render();
-  toast("Товар отредактирован");
+  toast("Товар обновлён");
 }
 
 function editPrice(id){let p=state.products.find(x=>x.id===id),v=prompt("Новая продажная цена:",p.sellPrice||"");if(v===null)return;p.sellPrice=Number(v||0);save();render();toast("Цена обновлена")}
