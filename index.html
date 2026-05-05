@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ТехноМир Магазин v35</title>
+<title>ТехноМир Магазин v39</title>
 <style>
 :root{--bg:#edf3f8;--card:#fff;--text:#172033;--muted:#64748b;--blue:#24466f;--blue2:#3b6fa8;--line:#e2e8f0;--green:#168a4b;--red:#c63642}
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#dce8f4,#f4f8fb);color:var(--text)}
@@ -2506,6 +2506,73 @@ tbody tr.selected td:first-child:before{
   background:#f7fbff !important;
 }
 
+
+/* v39 final premium products polish */
+#view-products .layout{
+  grid-template-columns:minmax(760px,1.08fr) minmax(500px,.92fr) !important;
+  gap:22px !important;
+  align-items:start !important;
+}
+#view-products .card:first-child,
+#view-products #details{
+  padding:22px !important;
+}
+#view-products #details{position:sticky;top:18px;}
+#view-products .scan-box{
+  position:relative;overflow:hidden;padding:18px 18px 18px 20px !important;border-radius:22px !important;
+  background:linear-gradient(135deg,#f4f9ff 0%,#ffffff 100%) !important;
+  border:1px solid #dbe8f7 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 14px 30px rgba(19,57,104,.06) !important;
+}
+#view-products .scan-box:after{content:"";position:absolute;inset:auto -50px -60px auto;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle, rgba(10,107,255,.10), transparent 68%);}
+#view-products .search{grid-template-columns:minmax(0,1fr) 120px !important;gap:10px !important;margin:14px 0 12px !important;}
+#view-products .search input{height:54px !important;border-radius:16px !important;background:linear-gradient(180deg,#ffffff,#f8fbff) !important;border:1px solid #d9e7f6 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.92) !important;font-size:15px !important;}
+#view-products .search button,#view-products .category-filter-row button,#view-products .category-filter-row select{height:54px !important;border-radius:16px !important;}
+#view-products .mini-tabs{gap:10px !important;margin:2px 0 14px !important;}
+#view-products .product-filter{min-height:44px !important;padding:10px 15px !important;border-radius:14px !important;border:1px solid #dce8f7 !important;background:linear-gradient(180deg,#ffffff,#f8fbff) !important;color:#19324d !important;box-shadow:0 8px 18px rgba(16,53,98,.05), inset 0 1px 0 rgba(255,255,255,.95) !important;}
+#view-products .product-filter.active{background:linear-gradient(135deg,#0a6bff,#0057d5) !important;color:#fff !important;border-color:#0a6bff !important;box-shadow:0 16px 30px rgba(10,107,255,.22) !important;}
+#view-products .category-filter-row{gap:10px !important;margin-bottom:16px !important;}
+#view-products .category-filter-row select{background:linear-gradient(180deg,#ffffff,#f8fbff) !important;border:1px solid #d9e7f6 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.95) !important;}
+#view-products table{border-collapse:separate !important;border-spacing:0 10px !important;}
+#view-products thead th{position:sticky;top:0;z-index:2;background:#f5f9ff !important;color:#70839d !important;font-size:12px !important;letter-spacing:.04em !important;border-bottom:none !important;padding:14px 16px !important;}
+#productsTable tbody tr{background:linear-gradient(180deg,#ffffff,#fbfdff) !important;box-shadow:0 10px 22px rgba(17,54,96,.055) !important;}
+#productsTable td{padding:16px 16px !important;border-top:1px solid #edf3fb !important;border-bottom:1px solid #edf3fb !important;}
+#productsTable td:first-child{border-left:1px solid #edf3fb !important;border-top-left-radius:18px !important;border-bottom-left-radius:18px !important;}
+#productsTable td:last-child{border-right:1px solid #edf3fb !important;border-top-right-radius:18px !important;border-bottom-right-radius:18px !important;}
+#productsTable tbody tr:hover{background:linear-gradient(180deg,#fafdff,#ffffff) !important;box-shadow:0 14px 28px rgba(17,54,96,.075) !important;}
+#productsTable tr.selected{background:linear-gradient(90deg,#eef6ff 0%,#fbfdff 100%) !important;box-shadow:inset 4px 0 0 #0a6bff, 0 18px 34px rgba(10,107,255,.11) !important;}
+#productsTable tr.selected td{border-top:1px solid rgba(10,107,255,.22) !important;border-bottom:1px solid rgba(10,107,255,.22) !important;}
+#productsTable tr.selected td:first-child{border-left:1px solid rgba(10,107,255,.22) !important;padding-left:18px !important;}
+#productsTable tr.selected td:last-child{border-right:1px solid rgba(10,107,255,.22) !important;}
+.prod-main-title{font-size:22px;line-height:1.08;font-weight:900;letter-spacing:-.025em;color:#082047;}
+.prod-main-meta{margin-top:5px;color:#71839c;font-size:12.5px;font-weight:700;}
+.prod-main-name{margin-top:7px;color:#2c4668;font-size:15px;}
+.prod-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
+.prod-stock-cell,.prod-buy-cell,.prod-sell-cell,.prod-status-cell{vertical-align:middle !important;}
+.stock-big,.sell-main{font-size:22px;line-height:1.05;font-weight:900;color:#082047;}
+.stock-big span{font-size:15px;color:#6b7e98;font-weight:800;}
+.buy-main{font-weight:800;color:#0d2d57;margin-bottom:4px;}
+.prod-status-cell .pill{font-size:12px !important;padding:7px 11px !important;}
+.table-footer{margin-top:6px;padding:14px 6px 2px !important;color:#6c809b !important;}
+#details h3{font-size:19px !important;color:#0b2344 !important;margin-bottom:12px !important;}
+.product-hero{position:relative;overflow:hidden;min-height:206px !important;padding:24px !important;background:linear-gradient(135deg,#ffffff 0%,#f6fbff 100%) !important;}
+.product-hero:before{content:"";position:absolute;right:-30px;top:-45px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle, rgba(10,107,255,.08), transparent 68%);}
+.product-media{width:158px !important;height:158px !important;border-radius:22px !important;}
+.product-main-info h2{font-size:31px !important;line-height:1.04 !important;letter-spacing:-.04em !important;margin-bottom:10px !important;}
+.metric-grid{gap:12px !important;margin-top:14px !important;}
+.metric{min-height:96px;padding:16px !important;border-radius:20px !important;background:linear-gradient(180deg,#ffffff,#f8fbff) !important;border:1px solid #e2ebf7 !important;box-shadow:0 12px 24px rgba(17,54,96,.06), inset 0 1px 0 rgba(255,255,255,.96) !important;}
+.metric span{font-size:12px !important;color:#7587a0 !important;font-weight:700;}
+.metric b{font-size:24px !important;color:#081f43 !important;}
+.quick-actions{gap:12px !important;margin-top:10px !important;}
+.quick-actions .btn,.quick-actions .btn2,.quick-actions .danger{min-height:52px !important;border-radius:16px !important;font-size:15px !important;}
+.quick-actions .btn2{background:linear-gradient(180deg,#ffffff,#f7fbff) !important;color:#173253 !important;border:1px solid #dce7f5 !important;box-shadow:0 10px 20px rgba(16,53,98,.05), inset 0 1px 0 rgba(255,255,255,.95) !important;}
+.quick-actions .primary-sell{background:linear-gradient(135deg,#0a6bff,#0057d5) !important;box-shadow:0 18px 34px rgba(10,107,255,.22) !important;}
+.quick-actions .danger{background:linear-gradient(180deg,#fff3f4,#ffe7ea) !important;color:#c0263d !important;border:1px solid #fecdd3 !important;}
+.history-section{margin-top:18px !important;padding-top:16px !important;border-top:1px solid #e7eff9 !important;}
+.history-section table{border-spacing:0 !important;}
+.history-section th{background:#f7fbff !important;}
+@media(max-width:1200px){#view-products .layout{grid-template-columns:1fr !important;}#view-products #details{position:static;}}
+@media(max-width:760px){#view-products .search{grid-template-columns:1fr !important;}#view-products .category-filter-row{grid-template-columns:1fr !important;}.prod-main-title{font-size:18px;}.metric-grid{grid-template-columns:1fr 1fr !important;}.quick-actions{grid-template-columns:1fr !important;}}
+
 </style>
 </head>
 <body>
@@ -3305,11 +3372,16 @@ function renderProducts(){
   productsTable.innerHTML=arr.map(p=>{
     const st=stock(p);
     return `<tr class="${p.id===selectedProductId?'selected':''} ${p.id===lastScannedProductId?'scan-flash':''} ${p.archived?'archived-row':''}" onclick="selectProduct('${p.id}')">
-      <td><b>${p.brand||""} ${p.model||""}</b><br><span class="muted">${p.category||"—"} · ${p.code}</span><br>${p.name||""}${!p.sellPrice?'<br><span class="pill warn">без цены</span>':''}${(!p.archived && Number(p.minStock||0)>0 && st>0 && st<=Number(p.minStock||0))?'<br><span class="pill warn">мало остатка</span>':''}${p.archived?'<br><span class="pill warn">архив</span>':''}</td>
-      <td><b>${st}</b> шт<br><span class="muted">мин: ${Number(p.minStock||0)||"—"}</span></td>
-      <td>посл. ${rub(lastBuy(p))}<br><span class="muted">сред. ${rub(avgBuy(p))}</span><br><span class="muted">${lastReceiptInfo(p)}</span></td>
-      <td>${p.sellPrice?rub(p.sellPrice):"<span class='pill warn'>не указана</span>"}</td>
-      <td>${p.archived?"<span class='pill warn'>Архив</span>":st>0?"<span class='pill ok'>В наличии</span>":"<span class='pill bad'>Нет</span>"}</td>
+      <td class="prod-main-cell">
+        <div class="prod-main-title">${p.brand||""} ${p.model||""}</div>
+        <div class="prod-main-meta">${p.category||"—"} · ${p.code}</div>
+        <div class="prod-main-name">${p.name||""}</div>
+        <div class="prod-badges">${!p.sellPrice?'<span class="pill warn">без цены</span>':''}${p.archived?'<span class="pill warn">архив</span>':''}</div>
+      </td>
+      <td class="prod-stock-cell"><div class="stock-big">${st}<span> шт</span></div><div class="muted">остаток</div></td>
+      <td class="prod-buy-cell"><div class="buy-main">посл. ${rub(lastBuy(p))}</div><div class="muted">сред. ${rub(avgBuy(p))}</div><div class="muted">${lastReceiptInfo(p)}</div></td>
+      <td class="prod-sell-cell">${p.sellPrice?`<div class="sell-main">${rub(p.sellPrice)}</div>`:"<span class='pill warn'>не указана</span>"}</td>
+      <td class="prod-status-cell">${p.archived?"<span class='pill warn'>Архив</span>":st>0?"<span class='pill ok'>В наличии</span>":"<span class='pill bad'>Нет</span>"}</td>
     </tr>`
   }).join("");
 
