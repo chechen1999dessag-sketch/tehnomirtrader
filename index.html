@@ -1681,6 +1681,247 @@ body{
   .sub-tabs .tab{min-width:100%; flex:1 1 100%;}
 }
 
+
+/* v30 — closer to premium reference, richer cards, cleaner selection */
+body{
+  background:
+    radial-gradient(circle at 8% 0%, rgba(30,134,255,.14), transparent 24%),
+    radial-gradient(circle at 92% 6%, rgba(47,109,228,.10), transparent 22%),
+    linear-gradient(180deg,#edf5ff 0%,#f7fbff 46%,#eaf3fb 100%) !important;
+}
+.header{
+  background:
+    linear-gradient(118deg, rgba(2,18,44,.98) 0%, rgba(3,33,76,.98) 46%, rgba(0,88,216,.92) 100%) !important;
+  box-shadow:0 26px 54px rgba(3,28,68,.22) !important;
+}
+.header:before{
+  background:
+    linear-gradient(118deg,transparent 0 54%, rgba(255,255,255,.08) 54.15% 54.75%, transparent 54.9%),
+    linear-gradient(142deg,transparent 0 67%, rgba(42,138,255,.18) 67.2% 82%, transparent 82.2%) !important;
+}
+.brand-premium{gap:22px !important;}
+.tm-mark{
+  width:84px !important;
+  height:62px !important;
+  font-size:42px !important;
+  text-shadow:0 10px 28px rgba(0,0,0,.24);
+}
+.header h1{
+  font-size:48px !important;
+  font-weight:1000 !important;
+}
+.header p{
+  font-size:16px !important;
+  opacity:.96;
+}
+.header .actions .btn2{
+  border-radius:16px !important;
+  min-height:54px !important;
+  padding:0 22px !important;
+  background:linear-gradient(180deg, rgba(11,33,72,.55), rgba(8,26,57,.35)) !important;
+  border:1px solid rgba(205,226,255,.24) !important;
+  box-shadow:0 14px 28px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+
+.control-panel{
+  margin-top:-60px !important;
+  border-radius:28px !important;
+  padding:20px 20px 18px !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.97), rgba(251,253,255,.96)) !important;
+  border:1px solid rgba(220,233,247,.95) !important;
+  box-shadow:0 30px 60px rgba(20,58,102,.16) !important;
+}
+.control-panel .stats{gap:16px !important;}
+.control-panel .stat-card{
+  min-height:116px !important;
+  border-radius:22px !important;
+  padding:22px 22px 20px 98px !important;
+  background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%) !important;
+  border:1px solid #e1ebf6 !important;
+  box-shadow:0 16px 36px rgba(20,58,102,.08), inset 0 1px 0 rgba(255,255,255,.85) !important;
+  overflow:hidden;
+}
+.control-panel .stat-card:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.18), transparent 36%);
+  pointer-events:none;
+}
+.control-panel .stat-card .stat-icon{
+  width:58px !important;
+  height:58px !important;
+  top:24px !important;
+  left:24px !important;
+  border-radius:18px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8), 0 8px 18px rgba(21,67,126,.10) !important;
+}
+.control-panel .stat-card .stat-title{font-size:14px !important; color:#70839e !important;}
+.control-panel .stat-card .stat-value{font-size:34px !important; letter-spacing:-.03em;}
+
+.card{
+  border-radius:24px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,252,255,.97)) !important;
+  border:1px solid #dbe8f7 !important;
+  box-shadow:0 18px 40px rgba(19,54,96,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+.card h3{
+  letter-spacing:-.02em;
+}
+.scan-box{
+  background:linear-gradient(180deg,#fcfeff,#f5f9ff) !important;
+  border:1px solid #dce9f7 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+.search input,
+.category-filter-row select,
+.search .btn2,
+.search button{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.88);
+}
+.mini-tabs .btn2,
+.tabs .tab{
+  box-shadow:0 8px 18px rgba(19,54,96,.05), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+.product-hero{
+  position:relative;
+  border-radius:26px !important;
+  background:
+    linear-gradient(135deg,#fbfdff 0%,#f3f8ff 48%,#ffffff 100%) !important;
+  border:1px solid #deebf8 !important;
+  box-shadow:0 18px 38px rgba(16,50,92,.08), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  overflow:hidden;
+}
+.product-hero:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(100deg, rgba(21,116,255,.06), transparent 34%, rgba(255,255,255,.2) 58%, transparent 100%);
+  pointer-events:none;
+}
+.product-media{
+  border-radius:24px !important;
+  background:linear-gradient(135deg,#ffffff,#edf5ff) !important;
+  border:1px solid #dce8f6 !important;
+  box-shadow:0 14px 30px rgba(17,54,96,.08), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+.product-placeholder span{font-size:52px !important;}
+.product-main-info h2{
+  font-size:30px !important;
+  line-height:1.04 !important;
+  margin-bottom:8px !important;
+}
+.qr-card{
+  padding:10px;
+  border-radius:22px;
+  background:linear-gradient(180deg,#ffffff,#f8fbff);
+  border:1px solid #e1ebf7;
+  box-shadow:0 14px 26px rgba(19,54,96,.07);
+}
+.metric-grid{gap:12px !important;}
+.metric{
+  border-radius:20px !important;
+  padding:16px 16px 15px !important;
+  background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+  border:1px solid #e1ebf6 !important;
+  box-shadow:0 12px 24px rgba(18,55,97,.06), inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+.metric span{
+  font-size:12px !important;
+  color:#77879e !important;
+  text-transform:none;
+}
+.metric b{
+  font-size:26px !important;
+  letter-spacing:-.03em;
+  color:#071d3c;
+}
+.quick-actions .btn,
+.quick-actions .btn2,
+.quick-actions button{
+  min-height:52px !important;
+  border-radius:16px !important;
+  box-shadow:0 10px 22px rgba(19,54,96,.08), inset 0 1px 0 rgba(255,255,255,.7) !important;
+}
+.quick-actions .primary-sell{
+  min-height:56px !important;
+  font-size:17px !important;
+}
+
+/* cleaner product selection — no blue block over the text */
+#productsTable tr,
+#salesSearchList tr,
+#receiptSearchList tr,
+#inventoryFoundList tr,
+tbody tr{
+  position:relative;
+}
+#productsTable tr.selected,
+#salesSearchList tr.selected,
+#receiptSearchList tr.selected,
+#inventoryFoundList tr.selected,
+tbody tr.selected{
+  background:linear-gradient(90deg,#e7f1ff 0%,#f8fbff 100%) !important;
+  box-shadow:0 16px 30px rgba(10,107,255,.10) !important;
+  outline:2px solid rgba(10,107,255,.22);
+  outline-offset:-2px;
+}
+#productsTable tr.selected td,
+#salesSearchList tr.selected td,
+#receiptSearchList tr.selected td,
+#inventoryFoundList tr.selected td,
+tbody tr.selected td{
+  background:transparent !important;
+  border-top:1px solid rgba(10,107,255,.16) !important;
+  border-bottom:1px solid rgba(10,107,255,.16) !important;
+}
+#productsTable tr.selected td:first-child,
+#salesSearchList tr.selected td:first-child,
+#receiptSearchList tr.selected td:first-child,
+#inventoryFoundList tr.selected td:first-child,
+tbody tr.selected td:first-child{
+  position:relative;
+  padding-left:22px !important;
+  border-left:1px solid rgba(10,107,255,.22) !important;
+  border-top-left-radius:16px;
+  border-bottom-left-radius:16px;
+  box-shadow:inset 4px 0 0 #0a6bff;
+}
+#productsTable tr.selected td:last-child,
+#salesSearchList tr.selected td:last-child,
+#receiptSearchList tr.selected td:last-child,
+#inventoryFoundList tr.selected td:last-child,
+tbody tr.selected td:last-child{
+  border-right:1px solid rgba(10,107,255,.22) !important;
+  border-top-right-radius:16px;
+  border-bottom-right-radius:16px;
+}
+#productsTable tr.selected td:first-child:before,
+#salesSearchList tr.selected td:first-child:before,
+#receiptSearchList tr.selected td:first-child:before,
+#inventoryFoundList tr.selected td:first-child:before,
+tbody tr.selected td:first-child:before{
+  content:none !important;
+  display:none !important;
+}
+
+/* list feels more expensive */
+#productsTable td,
+#productsTable th{
+  padding-top:15px !important;
+  padding-bottom:15px !important;
+}
+#productsTable tbody tr:hover{
+  background:linear-gradient(90deg,#f7fbff,#fcfdff) !important;
+}
+
+@media(max-width:860px){
+  .header h1{font-size:38px !important;}
+  .tm-mark{width:66px !important;height:54px !important;font-size:34px !important;}
+  .product-main-info h2{font-size:25px !important;}
+}
+
 </style>
 </head>
 <body>
