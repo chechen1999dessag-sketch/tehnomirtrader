@@ -1922,6 +1922,144 @@ tbody tr.selected td:first-child:before{
   .product-main-info h2{font-size:25px !important;}
 }
 
+
+/* v31 — sharper premium logo and final polish */
+.header{
+  background:
+    radial-gradient(circle at 18% -10%, rgba(54,127,255,.30), transparent 28%),
+    linear-gradient(121deg, rgba(2,16,38,.99) 0%, rgba(2,29,68,.99) 42%, rgba(0,88,215,.93) 100%) !important;
+}
+.header:before{
+  background:
+    linear-gradient(118deg,transparent 0 58%, rgba(255,255,255,.08) 58.2% 58.8%, transparent 59%),
+    linear-gradient(145deg,transparent 0 69%, rgba(69,154,255,.16) 69.2% 84%, transparent 84.2%) !important;
+}
+.brand-premium{
+  gap:24px !important;
+  align-items:center !important;
+}
+.tm-mark{
+  position:relative !important;
+  width:104px !important;
+  height:72px !important;
+  min-width:104px !important;
+  border-radius:22px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:
+    linear-gradient(135deg, #1977ff 0%, #0b63ed 48%, #318fff 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.24),
+    inset 0 -10px 24px rgba(1,39,104,.18),
+    0 18px 34px rgba(8,73,177,.28) !important;
+  overflow:hidden !important;
+  isolation:isolate;
+}
+.tm-mark:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255,255,255,.18), transparent 30%),
+    linear-gradient(140deg, transparent 0 58%, rgba(255,255,255,.10) 58.2% 63%, transparent 63.3%);
+  pointer-events:none;
+}
+.tm-mark .tm-cut{
+  position:absolute;
+  left:44px;
+  top:8px;
+  width:5px;
+  height:58px;
+  border-radius:999px;
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.75), rgba(255,255,255,.08));
+  transform:rotate(22deg);
+  box-shadow:0 0 0 1px rgba(255,255,255,.06);
+  z-index:1;
+}
+.tm-mark .tm-shine{
+  position:absolute;
+  right:-8px;
+  top:-14px;
+  width:54px;
+  height:54px;
+  background:radial-gradient(circle, rgba(255,255,255,.28), transparent 70%);
+  z-index:0;
+}
+.tm-mark .tm-t,
+.tm-mark .tm-m{
+  position:relative;
+  z-index:2;
+  display:block;
+  font-family:Arial, "Segoe UI", sans-serif;
+  font-style:italic;
+  font-weight:1000;
+  font-size:46px !important;
+  line-height:1;
+  letter-spacing:-.10em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+  filter:none !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.06);
+}
+.tm-mark .tm-t{
+  color:#ffffff !important;
+  transform:translateX(8px) skewX(-10deg);
+}
+.tm-mark .tm-m{
+  color:#7fbaff !important;
+  transform:translateX(-2px) skewX(-10deg);
+}
+.header h1{
+  font-size:50px !important;
+  line-height:1.02 !important;
+  letter-spacing:-.045em !important;
+  text-shadow:0 8px 26px rgba(0,0,0,.12);
+}
+.header h1 span{color:#fff !important;}
+.header h1 em{color:#2c8fff !important;}
+.header p{
+  color:#deebff !important;
+  font-size:16px !important;
+  letter-spacing:-.01em;
+}
+.control-panel{
+  margin-top:-62px !important;
+}
+.stat-card,
+.card,
+.metric,
+.product-hero,
+.product-media,
+.qr-card{
+  backdrop-filter:saturate(1.06);
+}
+#productsTable tr.selected,
+#salesSearchList tr.selected,
+#receiptSearchList tr.selected,
+#inventoryFoundList tr.selected,
+tbody tr.selected{
+  background:linear-gradient(90deg,#eaf3ff 0%, #ffffff 100%) !important;
+  box-shadow:0 18px 30px rgba(10,107,255,.10) !important;
+}
+#productsTable tr.selected td:first-child,
+#salesSearchList tr.selected td:first-child,
+#receiptSearchList tr.selected td:first-child,
+#inventoryFoundList tr.selected td:first-child,
+tbody tr.selected td:first-child{
+  box-shadow:inset 5px 0 0 #0a6bff !important;
+}
+@media (max-width: 900px){
+  .tm-mark{
+    width:88px !important;
+    height:64px !important;
+    min-width:88px !important;
+  }
+  .tm-mark .tm-t,
+  .tm-mark .tm-m{font-size:40px !important;}
+  .header h1{font-size:40px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -1929,7 +2067,7 @@ tbody tr.selected td:first-child:before{
 <div class="wrap">
   <div class="header no-print">
     <div class="brand-head brand-premium">
-      <div class="tm-mark"><span>Т</span><span>М</span></div>
+      <div class="tm-mark" aria-label="TM logo"><span class="tm-t">T</span><span class="tm-m">M</span><span class="tm-cut" aria-hidden="true"></span><span class="tm-shine" aria-hidden="true"></span></div>
       <div>
         <h1><span>ТехноМир</span> <em>Магазин</em></h1>
         <p>Склад, продажи, поступления, остатки и QR-этикетки 58×40</p>
