@@ -2060,6 +2060,316 @@ tbody tr.selected td:first-child{
   .header h1{font-size:40px !important;}
 }
 
+
+/* v32 — apply the reference design inside the real app, not as an image */
+
+/* Header: reference-like dark-blue banner */
+.header{
+  min-height:184px !important;
+  padding:30px 46px 82px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:flex-start !important;
+  background:
+    linear-gradient(120deg, rgba(2,15,36,.99) 0%, rgba(4,31,74,.99) 43%, rgba(0,85,214,.94) 100%) !important;
+  box-shadow:0 28px 60px rgba(4,30,75,.22) !important;
+}
+.header:before{
+  background:
+    linear-gradient(120deg, transparent 0 58%, rgba(255,255,255,.10) 58.15% 58.65%, transparent 58.8%),
+    linear-gradient(145deg, transparent 0 69%, rgba(44,139,255,.20) 69.1% 85%, transparent 85.2%),
+    radial-gradient(circle at 72% -10%, rgba(0,112,255,.28), transparent 30%) !important;
+}
+.header:after{
+  right:-100px !important;
+  top:-120px !important;
+  width:650px !important;
+  height:310px !important;
+  background:radial-gradient(circle,rgba(0,115,255,.30),transparent 62%) !important;
+  filter:blur(4px) !important;
+}
+.brand-premium{
+  justify-content:flex-start !important;
+  text-align:left !important;
+  gap:24px !important;
+  align-items:center !important;
+  max-width:1200px;
+}
+
+/* Crisp TM wordmark like the reference, no square, no blurry letters */
+.tm-mark.tm-wordmark{
+  position:relative !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  display:inline-flex !important;
+  align-items:baseline !important;
+  justify-content:flex-start !important;
+  gap:0 !important;
+  isolation:auto !important;
+  transform:skewX(-10deg);
+}
+.tm-mark.tm-wordmark:before,
+.tm-mark.tm-wordmark:after,
+.tm-mark.tm-wordmark .tm-cut,
+.tm-mark.tm-wordmark .tm-shine{
+  display:none !important;
+  content:none !important;
+}
+.tm-mark.tm-wordmark .tm-t,
+.tm-mark.tm-wordmark .tm-m{
+  position:relative !important;
+  display:inline-block !important;
+  font-family:Arial, "Segoe UI", sans-serif !important;
+  font-size:46px !important;
+  font-weight:1000 !important;
+  font-style:italic !important;
+  line-height:.9 !important;
+  letter-spacing:-.10em !important;
+  text-rendering:geometricPrecision !important;
+  -webkit-font-smoothing:antialiased !important;
+  filter:none !important;
+  text-shadow:0 8px 18px rgba(0,0,0,.20) !important;
+  transform:none !important;
+}
+.tm-mark.tm-wordmark .tm-t{
+  color:#ffffff !important;
+  z-index:2;
+}
+.tm-mark.tm-wordmark .tm-m{
+  color:#1784ff !important;
+  margin-left:3px;
+  z-index:1;
+}
+.brand-title{
+  margin:0 0 8px !important;
+  font-size:48px !important;
+  line-height:.98 !important;
+  font-weight:1000 !important;
+  letter-spacing:-.045em !important;
+  text-shadow:0 10px 28px rgba(0,0,0,.18);
+}
+.brand-title span{
+  color:#ffffff !important;
+}
+.brand-title em{
+  font-style:normal !important;
+  color:#1685ff !important;
+}
+.header p{
+  color:#e0ecff !important;
+  font-size:16px !important;
+  letter-spacing:-.01em !important;
+}
+
+/* Reference-style stats card deck */
+.control-panel{
+  margin-top:-64px !important;
+  padding:20px 20px 18px !important;
+  border-radius:26px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(252,254,255,.97)) !important;
+  border:1px solid rgba(222,234,248,.95) !important;
+  box-shadow:0 28px 64px rgba(18,52,96,.17), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+.control-panel .stats{
+  grid-template-columns:repeat(4,minmax(210px,1fr)) !important;
+  gap:16px !important;
+}
+.control-panel .stat-card{
+  min-height:124px !important;
+  padding:26px 24px 22px 110px !important;
+  border-radius:20px !important;
+  background:linear-gradient(180deg,#ffffff,#fbfdff) !important;
+  border:1px solid #e3ecf7 !important;
+  box-shadow:0 16px 34px rgba(18,54,96,.08), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+.control-panel .stat-card .stat-icon{
+  width:66px !important;
+  height:66px !important;
+  left:28px !important;
+  top:28px !important;
+  border-radius:999px !important;
+  display:grid !important;
+  place-items:center !important;
+  font-size:31px !important;
+  box-shadow:0 12px 24px rgba(17,61,119,.10), inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+.control-panel .stat-card:nth-child(1) .stat-icon{
+  background:linear-gradient(135deg,#eaf3ff,#dbeaff) !important;
+  color:#006dff !important;
+}
+.control-panel .stat-card:nth-child(2) .stat-icon{
+  background:linear-gradient(135deg,#f1e9ff,#e0d3ff) !important;
+  color:#7c3aed !important;
+}
+.control-panel .stat-card:nth-child(3) .stat-icon{
+  background:linear-gradient(135deg,#e2fbea,#caf3db) !important;
+  color:#16a34a !important;
+}
+.control-panel .stat-card:nth-child(4) .stat-icon{
+  background:linear-gradient(135deg,#fff0dc,#ffdfb8) !important;
+  color:#f97316 !important;
+}
+.control-panel .stat-title{
+  color:#667891 !important;
+  font-size:16px !important;
+  margin-bottom:6px !important;
+}
+.control-panel .stat-value{
+  color:#071a38 !important;
+  font-size:36px !important;
+  line-height:1 !important;
+  letter-spacing:-.035em !important;
+}
+
+/* Navigation closer to reference: clean wide buttons */
+.nav-shell{
+  margin-top:18px !important;
+  gap:12px !important;
+}
+.primary-tabs{
+  border-top:1px solid #edf3fa !important;
+  padding-top:14px !important;
+  gap:12px !important;
+}
+.secondary-tabs{
+  gap:12px !important;
+}
+.main-tabs .tab,
+.sub-tabs .tab{
+  min-height:54px !important;
+  border-radius:15px !important;
+  border:1px solid #dfe9f6 !important;
+  background:linear-gradient(180deg,#ffffff,#f7fbff) !important;
+  color:#1e354f !important;
+  box-shadow:0 10px 22px rgba(19,54,96,.055), inset 0 1px 0 rgba(255,255,255,.90) !important;
+  font-size:15px !important;
+}
+.nav-ico{
+  width:31px !important;
+  height:31px !important;
+  border-radius:11px !important;
+}
+.main-tabs .tab.active,
+.sub-tabs .tab.active{
+  background:linear-gradient(135deg,#0a6bff,#0057d5) !important;
+  color:#ffffff !important;
+  border-color:#0a6bff !important;
+  box-shadow:0 18px 32px rgba(10,107,255,.24) !important;
+}
+
+/* Main cards like the reference */
+.card{
+  border-radius:24px !important;
+  background:linear-gradient(180deg,#ffffff,#fbfdff) !important;
+  border:1px solid #dde8f6 !important;
+  box-shadow:0 18px 42px rgba(18,54,96,.085), inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+.layout{
+  gap:22px !important;
+}
+
+/* Product list becomes more premium */
+#view-products .card:first-child{
+  padding:20px !important;
+}
+#productsTable{
+  border-collapse:separate !important;
+  border-spacing:0 0 !important;
+}
+#productsTable th{
+  height:50px !important;
+  background:#f8fbff !important;
+  color:#61738c !important;
+  font-size:12px !important;
+}
+#productsTable td{
+  padding-top:16px !important;
+  padding-bottom:16px !important;
+}
+#productsTable tbody tr{
+  border-radius:16px !important;
+}
+#productsTable tbody tr:hover{
+  background:linear-gradient(90deg,#f7fbff,#ffffff) !important;
+}
+
+/* Fix selected product: visible, expensive, but no marker over text */
+#productsTable tr.selected,
+#salesSearchList tr.selected,
+#receiptSearchList tr.selected,
+#inventoryFoundList tr.selected{
+  background:linear-gradient(90deg,#eaf3ff 0%,#ffffff 100%) !important;
+  outline:2px solid rgba(10,107,255,.45) !important;
+  outline-offset:-2px !important;
+  box-shadow:0 16px 30px rgba(10,107,255,.10), inset 0 0 0 1px rgba(10,107,255,.10) !important;
+}
+#productsTable tr.selected td,
+#salesSearchList tr.selected td,
+#receiptSearchList tr.selected td,
+#inventoryFoundList tr.selected td{
+  background:transparent !important;
+}
+#productsTable tr.selected td:first-child,
+#salesSearchList tr.selected td:first-child,
+#receiptSearchList tr.selected td:first-child,
+#inventoryFoundList tr.selected td:first-child{
+  padding-left:16px !important;
+  box-shadow:inset 4px 0 0 #0a6bff !important;
+}
+#productsTable tr.selected td:first-child:before,
+#salesSearchList tr.selected td:first-child:before,
+#receiptSearchList tr.selected td:first-child:before,
+#inventoryFoundList tr.selected td:first-child:before,
+tbody tr.selected td:first-child:before{
+  display:none !important;
+  content:none !important;
+}
+
+/* Product detail card closer to reference */
+.product-hero{
+  border-radius:24px !important;
+  min-height:192px !important;
+  background:linear-gradient(135deg,#ffffff 0%,#f7fbff 100%) !important;
+  border:1px solid #dde9f7 !important;
+  box-shadow:0 18px 38px rgba(18,54,96,.075), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+.product-media{
+  border-radius:20px !important;
+  background:linear-gradient(135deg,#ffffff,#eef6ff) !important;
+  box-shadow:0 14px 28px rgba(17,54,96,.08), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+.product-main-info h2{
+  font-size:30px !important;
+  line-height:1.07 !important;
+  letter-spacing:-.035em !important;
+}
+.qr-card{
+  border-radius:20px !important;
+  background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+  border:1px solid #e1ebf7 !important;
+  box-shadow:0 14px 28px rgba(17,54,96,.07) !important;
+}
+.metric{
+  border-radius:20px !important;
+  background:linear-gradient(180deg,#ffffff,#f8fbff) !important;
+  box-shadow:0 13px 26px rgba(18,54,96,.06), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+.metric b{
+  font-size:26px !important;
+}
+
+/* Responsive */
+@media(max-width:1000px){
+  .brand-title{font-size:38px !important;}
+  .tm-mark.tm-wordmark .tm-t,
+  .tm-mark.tm-wordmark .tm-m{font-size:38px !important;}
+}
+
 </style>
 </head>
 <body>
@@ -2067,9 +2377,9 @@ tbody tr.selected td:first-child{
 <div class="wrap">
   <div class="header no-print">
     <div class="brand-head brand-premium">
-      <div class="tm-mark" aria-label="TM logo"><span class="tm-t">T</span><span class="tm-m">M</span><span class="tm-cut" aria-hidden="true"></span><span class="tm-shine" aria-hidden="true"></span></div>
+      <div class="tm-mark tm-wordmark" aria-label="TM"><span class="tm-t">T</span><span class="tm-m">M</span></div>
       <div>
-        <h1><span>ТехноМир</span> <em>Магазин</em></h1>
+        <h1 class="brand-title"><span>ТехноМир</span> <em>Магазин</em></h1>
         <p>Склад, продажи, поступления, остатки и QR-этикетки 58×40</p>
       </div>
     </div>
